@@ -1,0 +1,14 @@
+{
+  "name": "y",
+  "version": "1.0.0",
+  "description": "A quiz game framework",
+  "source": "./dist/index.html",
+  "scripts": {
+    "dev":"tailwindcss -i ./src/input.css -o ./dist/styles.css --watch"
+  },
+  "author": "Thejus Sunny",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Dodo Quiz</title>
+    <script src="fontfaceobserver.standalone.js"> </script>
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+   
+</head>
+<body class="h-screen w-screen bg-yellow-50 ">
+    <div id="overlay" class="fixed w-100 h-100 z-10 inset-0 bg-white bg-opacity-20 pointer-events-auto backdrop-blur-md">
+
+    </div>
+    <!-- <div class="flex w-[200%] h-full justify-center flex-row "> -->
+    <div class="w-full h-full flex ">
+        <div class="flex overflow-x-auto  "id="root-page">
+            <div class=" w-screen  flex-shrink-0 h-20/21 bg-blue-100 flex-col flex   px-2  " id="quiz-page">
+                <div class=" w-full  bg-slate-500 flex "> <!--Top flex -->
+                    
+                    <div class="bg-red-500 w-2/3 flex flex-row justify-around"> 
+                        
+                        <label class="font-Monteserrat text-base sm:text-2xl md:text-3xl lg:text-4xl">Reward</label>   
+                        <div class="bg-purple-500  flex flex-row justify-between w-1/6">
+                            <img class="w-max h-max py-1.5" src="../assets/coinstack.png" alt="">
+                            <label class="font-Monteserrat py-1 text-base sm:text-2xl md:text-3xl lg:text-4xl" id="l-coin-quiz">1</label>  
+                        </div>
+                         <div class="bg-purple-500 flex flex-row justify-around  w-2/8">
+                            <img class="w-max h-max py-1.5" src="../assets/xpicon.png" alt="">
+                            <label class="font-Monteserrat py-1 text-base sm:text-2xl md:text-3xl lg:text-4xl" id="l-xp-quiz">+20</label>  
+                        </div>
+                         
+                    </div>
+                   
+                </div>
+                <div class="w-full h-5/6 flex flex-row bg-stone-800 ">
+                    <div class="flex flex-grow flex-col items-center justify-center pt-9  relative gap-2">
+                        <img class="w-5/6 h-auto py-1.5" src="../assets/clock.png" alt="">
+                        <div class="flex h-11/12 w-full  justify-center relative" >
+                            <img class="w-1/3 sm:w-1/3  h-full"  src="../assets/meterbg.png" alt="" id="img-meterbg-quiz">
+                            <img class="w-1/3 sm:w-1/3 h-full absolute  "  style="height: 100%; bottom:0" src="../assets/meterfill.png" alt=""  id="img-meterfill-quiz">
+                            <!-- <div class="flex flex-col  h-auto absolute   " style="width: 100%; bottom:0" id="div-knob1-poll">
+                                <label class="font-Monteserrat text-yellow-200 "  id="txt-progress1-poll">100% </label>
+                                <img class="  bottom-0 rounded-full border-2"  src="../assets/knob1.jpg"  id="img-knob1-poll" alt="" >
+                            </div> -->
+                            
+                        </div>
+                            
+                    </div>
+                    <div class="w-11/12 py-2 flex  flex-col justify-around bg-transparent items-center">
+                        <div class='w-10/12 h-auto'>
+                            <label class="font-Monteserrat text-white text-base sm:text-2xl md:text-3xl lg:text-4xl " id="l-question-quiz">
+                                Who will become the 15th prime minister of India ?
+                            </label>
+                        </div>
+                      
+                        <img class="w-11/12 h-auto rounded-lg" src="../assets/quizimage.png" alt="" id="img-main-quiz">
+                        <div class="flex flex-wrap w-11/12 h-2/6 justify-around  ">
+                                <button class="flex w-1/2 h-2/5 relative" id="btn-choice1-quiz">
+                                    <div  class="w-11/12 h-full bg-gray-200 rounded-lg shadow-lg">
+                                    </div>
+                                    <!-- <img  class="w-full h-[100%]" src="../assets/choicebutton-default.png"> -->
+                                    <div class="flex absolute inset-5 sm:inset-10 md:inset-10 justify-center items-center">
+                                        <label class="font-Monteserrat text-black text-base sm:text-2xl md:text-3xl lg:text-4xl " id="l-option1-quiz">
+                                            Narendra Modi
+                                        </label>
+                                    </div>
+                                </button>
+                                <button class="flex w-1/2 h-2/5 relative" id="btn-choice2-quiz">
+                                    <div  class="w-11/12 h-full bg-gray-200 rounded-lg shadow-lg">
+                                    </div>
+                                    <!-- <img class="w-full h-[100%]" src="../assets/choicebutton-default.png"> -->
+                                    <div class=" flex absolute inset-5 sm:inset-10 md:inset-10 lg:inset-12  justify-center items-center">
+                                        <label class="font-Monteserrat text-black text-base sm:text-2xl md:text-3xl lg:text-4xl  " id="l-option2-quiz">
+                                            Rahul Ghandi
+                                        </label>
+                                    </div>
+                                    
+                                </button>
+        
+                                <button class="flex w-1/2 h-2/5 relative" id="btn-choice3-quiz">
+                                    <div  class="w-11/12 h-full bg-gray-200 rounded-lg shadow-lg">
+                                    </div>
+                                    <!-- <img class="w-full h-[100%]" src="../assets/choicebutton-default.png"> -->
+                                    <div class=" flex absolute inset-5 sm:inset-10 md:inset-10 lg:inset-12  justify-center items-center">
+                                        <label class="font-Monteserrat text-black text-base sm:text-2xl md:text-3xl lg:text-4xl  " id="l-option3-quiz">
+                                            Rahul Ghandi
+                                        </label>
+                                    </div>
+                                    
+                                </button>
+        
+                                <button class="flex w-1/2 h-2/5 relative" id="btn-choice4-quiz">
+                                    <div  class="w-11/12 h-full bg-gray-200 rounded-lg shadow-lg">
+                                    </div>
+                                    <!-- <img class="w-full h-[100%]" src="../assets/choicebutton-default.png"> -->
+                                    <div class=" flex absolute inset-5 sm:inset-10 md:inset-10 lg:inset-12  justify-center items-center">
+                                        <label class="font-Monteserrat text-black text-base sm:text-2xl md:text-3xl lg:text-4xl  " id="l-option4-quiz">
+                                            Rahul Ghandi
+                                        </label>
+                                    </div>
+                                    
+                                </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+        <div  class=" w-screen  flex-shrink-0 h-20/21 bg-blue-100 flex-col   justify-evenly  flex  px2-" id= "quiz-summary-page">
+                <div class="w-full h-20 flex-row flex justify-center">
+                    <img class="w- auto h-10" src="../assets/Trophe.png" alt="">
+                    <label class="font-Monteserrat text-black text-3xl sm:text-5xl md:text-6xl lg:text-4xl ">Quiz Over!</label>
+                </div>
+                <div class="flex h-1/3 flex-col justify-center items-center relative  ">
+                    <img src="../assets/container.png" class="absolute z-0 w-auto h-full" alt="">
+                    <label class="font-Monteserrat text-black text-xl sm:text-2xl md:text-3xl lg:text-4xl z-10">Stats& Rewards</label>
+                    <img class="w-1/12 h-auto z-10" src="../assets/blueclock.png" alt="">
+                    <label class="font-Monteserrat text-black text-xl sm:text-2xl md:text-3xl lg:text-4xl z-10">3.5 sec avg</label>
+                    <div class="flex w-full h-14  justify-center z-10">
+                        <div class="flex  flex-row justify-evenly w-2/3 ">
+                            <div class="flex flex-col  items-center justify-center">
+                                <img class="w-auto h-1/2" src="../assets/correct.png" alt="">
+                                <label class="font-Monteserrat text-black text-lg sm:text-2xl md:text-3xl lg:text-4xl z-10">1</label>
+                            </div>
+                            <div class="flex flex-col items-center justify-center">
+                                <img class="w-auto h-1/2" src="../assets/wrong.png" alt="">
+                                <label class="font-Monteserrat text-black text-lg sm:text-2xl md:text-3xl lg:text-4xl z-10">1</label>
+                            </div>
+                            <div class="flex flex-col items-center justify-center">
+                                <img class="w-auto h-1/2" src="../assets/coinstack.png" alt="">
+                                <label class="font-Monteserrat text-black text-lg sm:text-2xl md:text-3xl lg:text-4xl z-10">1</label>
+                            </div>
+                            <div class="flex flex-col items-center justify-center">
+                                <img class="w-auto h-1/2" src="../assets/xpicon.png" alt="">
+                                <label class="font-Monteserrat text-black text-lg sm:text-2xl md:text-3xl lg:text-4xl z-10">1</label>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="h-2/5 flex justify-center items-center relative">
+                    <img src="../assets/containertall.png" class="absolute z-0 w-auto h-full" alt="">
+                    <div class="flex h-5/6 w-11/12 flex-col justify-between items-center ">
+                           
+                            <label class="font-Monteserrat text-black text-xl sm:text-2xl md:text-3xl lg:text-4xl z-10">Global leaderboards</label>
+                            <div class="flex w-full h-12 justify-center z-10">
+                                <div class="flex flex-row justify-around items-center w-5/6 ">
+                                    <label class="font-Monteserrat text-black text-lg sm:text-2xl md:text-3xl lg:text-4xl z-10">1.</label>
+                                    <img class="w-auto h-full" src="../assets/pp1.png" alt="">
+                                    <div class="flex w-1/2 justify-start items-center ">
+                                        <label class="font-Monteserrat text-black text-lg sm:text-2xl md:text-3xl lg:text-4xl z-10">George </label>
+                                    </div>
+                                    <label class="font-Monteserrat text-black text-lg sm:text-2xl md:text-3xl lg:text-4xl z-10">301</label>
+                                </div>
+                                
+                            </div>
+                            <div class="flex w-full h-12 justify-center z-10">
+                                <div class="flex flex-row justify-around items-center w-5/6 ">
+                                    <label class="font-Monteserrat text-black text-lg sm:text-2xl md:text-3xl lg:text-4xl z-10">1.</label>
+                                    <img class="w-auto h-full rounded-full border-2 border-blue-400" src="../assets/pp2.png" alt="">
+                                    <div class="flex w-1/2 justify-start items-center ">
+                                        <label class="font-Monteserrat text-blue-400 text-lg  sm:text-2xl md:text-3xl lg:text-4xl z-10">Athul S (you)</label>
+                                    </div>
+                                    <label class="font-Monteserrat text-blue-400 text-lg sm:text-2xl md:text-3xl lg:text-4xl z-10">295</label>
+                                </div>
+                                
+                            </div>
+                            <div class="flex w-full h-12 justify-center z-10">
+                                <div class="flex flex-row justify-around items-center w-5/6  ">
+                                    <label class="font-Monteserrat text-black text-lg sm:text-2xl md:text-3xl lg:text-4xl z-10">1.</label>
+                                    <img class="w-auto h-full " src="../assets/pp3.png" alt="">
+                                    <div class="flex w-1/2 justify-start items-center ">
+                                        <label class="font-Monteserrat text-black text-lg  sm:text-2xl md:text-3xl lg:text-4xl z-10">Thejus S</label>
+                                    </div>
+                                    <label class="font-Monteserrat text-black text-lg sm:text-2xl md:text-3xl lg:text-4xl z-10">287</label>
+                                </div>
+                            </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+    </div>
+   
+    
+ 
+    <script src="../app.js"></script>
+</body>
+
+</html>
+  

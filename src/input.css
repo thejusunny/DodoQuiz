@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@font-face {
+    font-family:'Montserrat';
+    src: url("../fonts/montserrat/Montserrat-Regular.ttf") format('truetype');
+}
+@font-face {
+    font-family:'Montserrat-bold';
+    src: url("../fonts/montserrat/Montserrat-Bold.ttf") format('truetype');
+}
