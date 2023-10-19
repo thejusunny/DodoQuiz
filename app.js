@@ -249,16 +249,16 @@ class PlayerScore
 }
 const mockQuizData = {
   questions: [
-    "Who is Elon Musk?",
-    "When is Indias Indpenedence Day?",
-    "When is Argentinas first world cup",
+    "Who is developer of GTA 5?",
+    "Who is lead character in GTA 5?",
+    "What is the name of this anime?",
   ],
   options: [
-    ["Buisness man", "Scientist", "Engineer", "Genius"],
-    ["Mars", "Venus", "Earth", "Pluto"],
-    ["William Shakespeare", "George Orwell", "Jane Austen", "Barack Obama"],
+    ["EA sports", "Blizzard", "Rockstar Games", "Ubisoft"],
+    ["Trevor", "Michael","Franklin", "Glyn"],
+    ["One piece", "Naruto", "Shingek ino Kyojin", "Jujitsu Kaisan"],
   ],
-  answers: [2, 3, 4],
+  answers: [3, 3, 4],
   images: [
     "https://assets.xboxservices.com/assets/0b/17/0b179504-412d-4af7-9e00-3e3d92633577.jpg?n=GTA-V_GLP-Page-Hero-1084_1920x1080.jpg",
     "https://news.xbox.com/en-us/wp-content/uploads/sites/2/2021/12/GTAO_Contract_Launch_MSFT_YTthumbnail_1920x1080.jpg",
@@ -401,7 +401,7 @@ function OptionSelected(index, button) {
     //correctBg.style.backgroundColor ='green';
     const bgAnim = new animation(correctBg);
     bgAnim.animatecolor(
-      1,
+      0.75,
       {
         start: rgbToHex(startColor),
         end: rgbToHex({ red: 0, green: 128, blue: 0 }),

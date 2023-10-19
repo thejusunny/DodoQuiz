@@ -534,8 +534,16 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+.pointer-events-none {
+  pointer-events: none;
+}
+
 .pointer-events-auto {
   pointer-events: auto;
+}
+
+.static {
+  position: static;
 }
 
 .fixed {
@@ -576,6 +584,10 @@ video {
 
 .flex {
   display: flex;
+}
+
+.hidden {
+  display: none;
 }
 
 .h-1\/2 {
@@ -706,6 +718,14 @@ video {
 
 .flex-grow {
   flex-grow: 1;
+}
+
+.touch-none {
+  touch-action: none;
+}
+
+.resize {
+  resize: both;
 }
 
 .flex-row {
