@@ -314,25 +314,29 @@ const mockUsers =
 };
 const mockQuizData = {
   questions: [
-    "Who is developer of GTA 5?",
-    "Who is lead character in GTA 5?",
+    "Who is developed GTA 5?",
+    "Who is the lead character in GTA 5?",
     "What is the name of this anime?",
+    "Who is the actor below?"
   ],
   options: [
     ["EA sports", "Blizzard", "Rockstar Games", "Ubisoft"],
     ["Trevor", "Michael","Franklin", "Glyn"],
     ["One piece", "Naruto", "Shingek ino Kyojin", "Jujitsu Kaisan"],
+    ["Jhonny Depp", "BrockLesnar", "Brook", "Dwayne Jhonson"],
   ],
-  answers: [3, 3, 4],
+  answers: [3, 2, 4,1],
   images: [
     "https://assets.xboxservices.com/assets/0b/17/0b179504-412d-4af7-9e00-3e3d92633577.jpg?n=GTA-V_GLP-Page-Hero-1084_1920x1080.jpg",
     "https://news.xbox.com/en-us/wp-content/uploads/sites/2/2021/12/GTAO_Contract_Launch_MSFT_YTthumbnail_1920x1080.jpg",
     "https://static.bandainamcoent.eu/high/jujutsu-kaisen/jujutsu-kaisen-cursed-clash/00-page-setup/JJK-header-mobile2.jpg",
+    "https://res.cloudinary.com/jerrick/image/upload/v1684913593/646dbdb8fccd75001d86d6e9.jpg",
   ],
   rewards: [
     ["10", "100"],
     ["20", "100"],
     ["5", "200"],
+    ["5", "100"],
   ],
 };
 const quizDataElements = new Map([
@@ -394,7 +398,7 @@ const quizData = new QuizData(mockQuizData);
 const leaderBoardUsers = new LeaderBoardUsers(mockUsers);
 const playerScore = new  PlayerScore(); 
 const overlayElement = document.getElementById("overlay");
-overlayElement.addEventListener("click", startQuiz);
+//overlayElement.addEventListener("click", startQuiz);
 var meterFillAnimation = null;
 const quizDuration = 5;
 function startQuiz() {
@@ -459,8 +463,8 @@ function OptionSelected(index, button) {
   clearTimeout(colorChangeTimeout);
   console.log("Selected" + index);
   const scaleAnimation = new animation(button);
-  button.style.width = 47.5 + "%";
-  button.style.height = 38 + "%";
+//   button.style.width = 47.5 + "%";
+//   button.style.height = 38 + "%";
   const quizElement = quizData.getQuizAt(currentPage);
   const bgDiv = button.querySelector("div");
   if (index == quizElement.answer) {
@@ -532,7 +536,7 @@ function hex0xToRgb(hex0x) {
 const rootContainer = document.getElementById("root-page");
 const quizContainer = document.getElementById("quiz-page");
 const summaryContainer = document.getElementById("quiz-summary-page");
-const noOfQuiz = 3;
+const noOfQuiz = 4;
 
 createQuizPages();
 const pages = new Array();
