@@ -247,6 +247,71 @@ class PlayerScore
           return (sum / this.time.length).toFixed(2);
     }
 }
+class User
+{
+    constructor(userName, point, rank)
+    {
+        this.userName=userName;
+        this.points=point;
+        this.rank = rank;
+    }
+
+}
+class LeaderBoardUsers
+{
+    constructor(data)
+    {
+        this.mainData  = data;
+        this.users = new Array();
+        for (let index = 0; index < this.mainData.name.length; index++) 
+        {
+            const userName = this.mainData.name[index];
+            const point = this.mainData.points[index];
+            const rank = this.mainData.rank[index];
+            const user = new User(userName, point, rank);
+            this.users.push(user);
+            console.log(user);
+        }
+        this.users.sort((a,b)=>a.rank - b.rank);
+
+    }
+    getUsers()
+    {
+        return this.users;
+    }
+    getOrderedUsers()
+    {
+
+    }
+}
+const mockUsers =
+{
+    name:
+    [
+        "Athul",
+        "Jhon",
+        "Thejus",
+        "James",
+        "Varun",
+    ],
+    points:
+    [
+        "192",
+        "140",
+        "122",
+        "170",
+        "167",
+    ],
+    rank:
+    [
+        "1",
+        "2",
+        "3",
+        "5",
+        "4",
+    ],
+
+};
 const mockQuizData = {
   questions: [
     "Who is developer of GTA 5?",
@@ -295,6 +360,26 @@ const quizDataElements = new Map([
   ["playerscore-txt", "l-yourscore-summary"],
   
 ]);
+const startPrompts =[
+    "1",
+    "2",
+    "3",
+    "Start!",
+]
+const promptText = document.getElementById('l-prompt-quiz');
+let count = 0;
+let promptInterval = setInterval(()=>{
+
+    promptText.textContent = startPrompts[count];
+    if(count>=startPrompts.length)
+    {
+        clearInterval(promptInterval);
+        startQuiz();
+        return;
+    }
+    count++;
+}, 1000);
+
 /*
 (c/tq * 0.5/avgt)*c1+ 0.2/avgt*5;  
 3/3 * 1* 20 + 1*15;
@@ -306,6 +391,7 @@ const quizDataElements = new Map([
 
 const correctConstant = 200;
 const quizData = new QuizData(mockQuizData);
+const leaderBoardUsers = new LeaderBoardUsers(mockUsers);
 const playerScore = new  PlayerScore(); 
 const overlayElement = document.getElementById("overlay");
 overlayElement.addEventListener("click", startQuiz);

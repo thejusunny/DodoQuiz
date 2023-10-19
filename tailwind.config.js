@@ -18,6 +18,7 @@ module.exports = {
     fontFamily:
     {
       'Monteserrat': ['Montserrat','sans-serif'],
+      'Monteserrat-bold': ['Montserrat-bold','sans-serif'],
     }
   },
   plugins: [
