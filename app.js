@@ -10,6 +10,9 @@ class animation {
     this.calculateValue = this.calculateValue.bind(this);
     this.calculateColor = this.calculateColor.bind(this);
     this.changeColor = this.changeColor.bind(this);
+    this.changeFontSize = this.changeFontSize.bind(this);
+    this.changeOpacity = this.changeOpacity.bind(this);
+    this.changeRotation = this.changeRotation.bind(this);
     this.pause = this.pause.bind(this);
     this.play = this.play.bind(this);
     this.offset = { start: 0, end: 0 };
@@ -19,6 +22,7 @@ class animation {
     this.currentLoop = 0;
     this.loopingData = null;
     this.progress = 0;
+    this.pong = false;
   }
   changeHeight(time) {
     if (!this.isPlaying) return;
@@ -105,20 +109,110 @@ class animation {
       }
     }
   }
+  changeFontSize(time) {
+    if (!this.isPlaying) return;
+    const value = this.calculateValue(time);
+    this.obj.style.fontSize = value.prefixedValue;
+    if (this.textObj) {
+      this.textObj.textContent = value.orginalValue.toFixed(1) + this.units;
+    }
+    if (this.offset.end > this.offset.start) {
+      if (value.orginalValue < this.offset.end) {
+        requestAnimationFrame(this.changeFontSize);
+      }
+    } else {
+      if (value.orginalValue > this.offset.end) {
+        
+        requestAnimationFrame(this.changeFontSize);
+      }
+    }
+  }
+  changeOpacity(time) {
+    if (!this.isPlaying) return;
+    const value = this.calculateValue(time);
+    this.obj.style.opacity = value.prefixedValue;
+    if (this.textObj) {
+      this.textObj.textContent = value.orginalValue.toFixed(1) + this.units;
+    }
+    if (this.offset.end > this.offset.start) {
+      if (value.orginalValue < this.offset.end) {
+        requestAnimationFrame(this.changeOpacity);
+      }
+    } else {
+      if (value.orginalValue > this.offset.end) {
+        console.log(value.orginalValue);
+        requestAnimationFrame(this.changeOpacity);
+      }
+    }
+  }
+  changeRotation(time) {
+    if (!this.isPlaying) return;
+    const value = this.calculateValue(time);
+    const rotatedValue = value.orginalValue%360;
+    console.log(this.obj.id+","+ rotatedValue);
+    this.obj.style.transform = `rotate(${rotatedValue}deg)`;
+
+    if (this.textObj) {
+      this.textObj.textContent = value.orginalValue.toFixed(1) + this.units;
+    }
+   
+    if (this.loopingData != null) {
+      //console.log("Not Null");
+      if (this.loopingData.infinite) {
+        if (value.progress >= 1) {
+          this.startTime = time;
+          this.pong = !this.pong;
+          console.log("ReversePong"+value.orginalValue);
+        }
+        requestAnimationFrame(this.changeRotation);
+      } else {
+        //console.log("Loops"+value.progress);
+        if (value.progress >= 1) {
+          if (this.currentLoop < this.loopingData.loops) {
+            this.startTime = time;
+            this.pong = !this.pong;
+            requestAnimationFrame(this.changeRotation);
+            this.currentLoop++;
+          } else {
+            this.isPlaying = false;
+            if (this.callback != null) this.callback();
+          }
+        } else {
+          requestAnimationFrame(this.changeRotation);
+        }
+      }
+    } else {
+      if (value.progress < 1) {
+        requestAnimationFrame(this.changeRotation);
+      } else {
+        this.isPlaying = false;
+        if (this.callback != null) this.callback();
+      }
+    }
+  }
   calculateValue(time) {
     const mills = this.duration * 1000;
     if (!this.startTime) {
       this.startTime = time;
+      console.log("cache"+ this.obj.id);
+   
+      const x = time - this.startTime;
+      console.log("Progress"+ x/mills);
     }
     const elapsedTime = time - this.startTime;
-    this.progress = elapsedTime/mills;
+    var t = elapsedTime/mills;
+    var newT = t;
+    if(this.pong)
+    {
+      newT = 1-newT;
+    }
     const dir = Math.sign(this.offset.end - this.offset.start);
     const value =
       this.offset.start +
       dir *
-        (elapsedTime / mills) *
+      newT *
         Math.abs(this.offset.end - this.offset.start);
-    return { orginalValue: value, prefixedValue: value + this.units };
+    return { orginalValue:  value,progress:t,  prefixedValue: value + this.units };
   }
   calculateColor(time) {
     const mills = this.duration * 1000;
@@ -158,6 +252,29 @@ class animation {
     this.callback = callback;
     requestAnimationFrame(this.changeColor);
   }
+  animateFontSize(duration, offset, callback =null,units= "%")
+  {
+    this.duration = duration;
+    this.offset = offset;
+    this.callback = callback;
+    this.units = units;
+    requestAnimationFrame(this.changeFontSize);
+  } 
+  animateOpacity(duration, offset, callback =null)
+  {
+    this.duration = duration;
+    this.offset = offset;
+    this.callback = callback;
+    requestAnimationFrame(this.changeOpacity);
+  } 
+  animateRotation(duration, offset, loopingData,callback =null)
+  {
+    this.duration = duration;
+    this.offset = offset;
+    this.callback = callback;
+    this.loopingData = loopingData;
+    requestAnimationFrame(this.changeRotation);
+  } 
   pause() {
     this.isPlaying = false;
   }
@@ -362,12 +479,13 @@ const quizDataElements = new Map([
   ["coinstats-txt", "l-coins-summary"],
   ["xpstats-txt", "l-xp-summary"],
   ["playerscore-txt", "l-yourscore-summary"],
+  ["clock-img", "img-clock-quiz"],
   
 ]);
 const startPrompts =[
-    "1",
-    "2",
     "3",
+    "2",
+    "1",
     "Start!",
 ]
 const promptText = document.getElementById('l-prompt-quiz');
@@ -375,14 +493,26 @@ let count = 0;
 let promptInterval = setInterval(()=>{
 
     promptText.textContent = startPrompts[count];
+    const fontScaleAnimation = new animation(promptText);
+    const fontOpacityAnimation = new animation(promptText);
+    if(count>=startPrompts.length-1)
+    {
+      fontScaleAnimation.animateFontSize(0.2, {start:300, end:500});
+      setTimeout(()=>{ fontOpacityAnimation.animateOpacity(0.5, {start:1, end:0});},1000)
+    }
+    else 
+      fontScaleAnimation.animateFontSize(0.5, {start:600, end:300});
+    
+    fontOpacityAnimation.animateOpacity(0.25, {start:0, end:1});
     if(count>=startPrompts.length)
     {
+       
         clearInterval(promptInterval);
         startQuiz();
         return;
     }
     count++;
-}, 1000);
+}, 1500);
 
 /*
 (c/tq * 0.5/avgt)*c1+ 0.2/avgt*5;  
@@ -398,6 +528,7 @@ const quizData = new QuizData(mockQuizData);
 const leaderBoardUsers = new LeaderBoardUsers(mockUsers);
 const playerScore = new  PlayerScore(); 
 const overlayElement = document.getElementById("overlay");
+let clockAnimation;
 //overlayElement.addEventListener("click", startQuiz);
 var meterFillAnimation = null;
 const quizDuration = 5;
@@ -433,9 +564,14 @@ function setupQuiz() {
     meterFillAnimation.pause();
     timerRanOut();
   });
-    const meterColorChangeAnimation = new animation(meterFillImg);
    colorChangeTimeout =  setTimeout(() => {
         meterFillImg.style.backgroundColor ='red';
+        const clockImg = getElementsFromCurrentPage('clock-img');
+        clockAnimation = new animation(clockImg);
+        clockAnimation.animateRotation(0.1,{start:345, end:375}, {infinite:true,loops:0, pingpong: false});
+        setTimeout(()=>{
+          clockAnimation.pause();
+        },3000);
     }, (quizDuration*1000)*0.7);
     // meterColorChangeAnimation.animatecolor(0.5,
     //     {
@@ -460,6 +596,7 @@ function timerRanOut() {
 }
 function OptionSelected(index, button) {
   meterFillAnimation?.pause();
+  clockAnimation?.pause();
   clearTimeout(colorChangeTimeout);
   console.log("Selected" + index);
   const scaleAnimation = new animation(button);
