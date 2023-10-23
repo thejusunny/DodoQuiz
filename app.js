@@ -1,406 +1,11 @@
-class animation {
-  constructor(obj, textObj = null) {
-    this.duration = null;
-    this.startTime = null;
-    this.obj = obj;
-    this.units = null;
-    this.changeHeight = this.changeHeight.bind(this);
-    this.changeBottomPivot = this.changeBottomPivot.bind(this);
-    this.changeWidth = this.changeWidth.bind(this);
-    this.calculateValue = this.calculateValue.bind(this);
-    this.calculateColor = this.calculateColor.bind(this);
-    this.changeColor = this.changeColor.bind(this);
-    this.changeFontSize = this.changeFontSize.bind(this);
-    this.changeOpacity = this.changeOpacity.bind(this);
-    this.changeRotation = this.changeRotation.bind(this);
-    this.pause = this.pause.bind(this);
-    this.play = this.play.bind(this);
-    this.offset = { start: 0, end: 0 };
-    this.textObj = textObj;
-    this.callback = null;
-    this.isPlaying = true;
-    this.currentLoop = 0;
-    this.loopingData = null;
-    this.progress = 0;
-    this.pong = false;
-  }
-  changeHeight(time) {
-    if (!this.isPlaying) return;
-    const value = this.calculateValue(time);
-    this.obj.style.height = value.prefixedValue;
-    if (this.textObj) {
-      this.textObj.textContent = value.orginalValue.toFixed(1) + this.units;
-    }
-    if (this.offset.end > this.offset.start) {
-      if (value.orginalValue < this.offset.end) {
-        requestAnimationFrame(this.changeHeight);
-      } else if (this.callback != null) this.callback();
-    } else {
-      if (value.orginalValue > this.offset.end) {
-        requestAnimationFrame(this.changeHeight);
-      } else if (this.callback != null) this.callback();
-    }
-  }
-  changeBottomPivot(time) {
-    if (!this.isPlaying) return;
-    const value = this.calculateValue(time);
-    this.obj.style.bottom = value.prefixedValue;
-    if (this.textObj) {
-      this.textObj.textContent = value.orginalValue.toFixed(1) + this.units;
-    }
-    if (value.orginalValue < this.offset.end) {
-      requestAnimationFrame(this.changeBottomPivot);
-    }
-  }
-  changeWidth(time) {
-    if (!this.isPlaying) return;
-    const value = this.calculateValue(time);
-    this.obj.style.width = value.prefixedValue;
-    if (this.textObj) {
-      this.textObj.textContent = value.orginalValue.toFixed(1) + this.units;
-    }
-    if (this.offset.end > this.offset.start) {
-      if (value.orginalValue < this.offset.end) {
-        requestAnimationFrame(this.changeWidth);
-      }
-    } else {
-      if (value.orginalValue > this.offset.end) {
-        console.log(value.orginalValue);
-        requestAnimationFrame(this.changeWidth);
-      }
-    }
-  }
-  changeColor(time) {
-    if (!this.isPlaying) return;
-    const value = this.calculateColor(time);
-    this.obj.style.backgroundColor = `#${value.color.toString(16)}`;
+import { QuizData } from "./quizdata.js";
+import { QuizUser } from "./user.js";
+import { PlayerScore } from "./quizdata.js";
+import { LeaderBoardUsers } from "./quizdata.js";
+import { Animation } from "./animation.js";
 
-    if (this.loopingData != null) {
-      //console.log("Not Null");
-      if (this.loopingData.infinite) {
-        if (value.progress >= 1) {
-          this.startTime = time;
-        }
-        requestAnimationFrame(this.changeColor);
-      } else {
-        //console.log("Loops"+value.progress);
-        if (value.progress >= 1) {
-          if (this.currentLoop < this.loopingData.loops) {
-            this.startTime = time;
-            requestAnimationFrame(this.changeColor);
-            this.currentLoop++;
-          } else {
-            this.isPlaying = false;
-            console.log("Last frame" + this.obj.style.backgroundColor);
-            this.obj.style.backgroundColor = hex0xToRgb(this.offset.end);
-            console.log(hex0xToRgb(this.offset.end));
-            if (this.callback != null) this.callback();
-          }
-        } else {
-          requestAnimationFrame(this.changeColor);
-        }
-      }
-    } else {
-      if (value.progress < 1) {
-        requestAnimationFrame(this.changeColor);
-      } else {
-        this.isPlaying = false;
-        if (this.callback != null) this.callback();
-      }
-    }
-  }
-  changeFontSize(time) {
-    if (!this.isPlaying) return;
-    const value = this.calculateValue(time);
-    this.obj.style.fontSize = value.prefixedValue;
-    if (this.textObj) {
-      this.textObj.textContent = value.orginalValue.toFixed(1) + this.units;
-    }
-    if (this.offset.end > this.offset.start) {
-      if (value.orginalValue < this.offset.end) {
-        requestAnimationFrame(this.changeFontSize);
-      }
-    } else {
-      if (value.orginalValue > this.offset.end) {
-        
-        requestAnimationFrame(this.changeFontSize);
-      }
-    }
-  }
-  changeOpacity(time) {
-    if (!this.isPlaying) return;
-    const value = this.calculateValue(time);
-    this.obj.style.opacity = value.prefixedValue;
-    if (this.textObj) {
-      this.textObj.textContent = value.orginalValue.toFixed(1) + this.units;
-    }
-    if (this.offset.end > this.offset.start) {
-      if (value.orginalValue < this.offset.end) {
-        requestAnimationFrame(this.changeOpacity);
-      }
-    } else {
-      if (value.orginalValue > this.offset.end) {
-        console.log(value.orginalValue);
-        requestAnimationFrame(this.changeOpacity);
-      }
-    }
-  }
-  changeRotation(time) {
-    if (!this.isPlaying) return;
-    const value = this.calculateValue(time);
-    const rotatedValue = value.orginalValue%360;
-    console.log(this.obj.id+","+ rotatedValue);
-    this.obj.style.transform = `rotate(${rotatedValue}deg)`;
+const quizUser = new QuizUser();
 
-    if (this.textObj) {
-      this.textObj.textContent = value.orginalValue.toFixed(1) + this.units;
-    }
-   
-    if (this.loopingData != null) {
-      //console.log("Not Null");
-      if (this.loopingData.infinite) {
-        if (value.progress >= 1) {
-          this.startTime = time;
-          this.pong = !this.pong;
-          console.log("ReversePong"+value.orginalValue);
-        }
-        requestAnimationFrame(this.changeRotation);
-      } else {
-        //console.log("Loops"+value.progress);
-        if (value.progress >= 1) {
-          if (this.currentLoop < this.loopingData.loops) {
-            this.startTime = time;
-            this.pong = !this.pong;
-            requestAnimationFrame(this.changeRotation);
-            this.currentLoop++;
-          } else {
-            this.isPlaying = false;
-            if (this.callback != null) this.callback();
-          }
-        } else {
-          requestAnimationFrame(this.changeRotation);
-        }
-      }
-    } else {
-      if (value.progress < 1) {
-        requestAnimationFrame(this.changeRotation);
-      } else {
-        this.isPlaying = false;
-        if (this.callback != null) this.callback();
-      }
-    }
-  }
-  calculateValue(time) {
-    const mills = this.duration * 1000;
-    if (!this.startTime) {
-      this.startTime = time;
-      console.log("cache"+ this.obj.id);
-   
-      const x = time - this.startTime;
-      console.log("Progress"+ x/mills);
-    }
-    const elapsedTime = time - this.startTime;
-    var t = elapsedTime/mills;
-    var newT = t;
-    if(this.pong)
-    {
-      newT = 1-newT;
-    }
-    const dir = Math.sign(this.offset.end - this.offset.start);
-    const value =
-      this.offset.start +
-      dir *
-      newT *
-        Math.abs(this.offset.end - this.offset.start);
-    return { orginalValue:  value,progress:t,  prefixedValue: value + this.units };
-  }
-  calculateColor(time) {
-    const mills = this.duration * 1000;
-    if (!this.startTime) {
-      this.startTime = time;
-    }
-    const elapsedTime = time - this.startTime;
-    const t = elapsedTime / mills;
-    this.progress = t;
-    const value = this.lerpColor(this.offset.start, this.offset.end, t);
-    return { color: value, progress: t };
-  }
-  animateHeight(duration, offset, callback = null, units = "%") {
-    this.duration = duration;
-    this.offset = offset;
-    this.units = units;
-    this.callback = callback;
-    requestAnimationFrame(this.changeHeight);
-  }
-  animateWidth(duration, offset, units = "%") {
-    this.duration = duration;
-    this.offset = offset;
-    this.units = units;
-    requestAnimationFrame(this.changeWidth);
-  }
-  animateBottomPivot(duration, offset, units = "%") {
-    this.duration = duration;
-    this.units = units;
-    this.offset = offset;
-    requestAnimationFrame(this.changeBottomPivot);
-  }
-  animatecolor(duration, colorOffset, loopData = null, callback = null) {
-    this.duration = duration;
-    this.offset = colorOffset;
-    this.loopingData = loopData;
-    this.loopCount = 0;
-    this.callback = callback;
-    requestAnimationFrame(this.changeColor);
-  }
-  animateFontSize(duration, offset, callback =null,units= "%")
-  {
-    this.duration = duration;
-    this.offset = offset;
-    this.callback = callback;
-    this.units = units;
-    requestAnimationFrame(this.changeFontSize);
-  } 
-  animateOpacity(duration, offset, callback =null)
-  {
-    this.duration = duration;
-    this.offset = offset;
-    this.callback = callback;
-    requestAnimationFrame(this.changeOpacity);
-  } 
-  animateRotation(duration, offset, loopingData,callback =null)
-  {
-    this.duration = duration;
-    this.offset = offset;
-    this.callback = callback;
-    this.loopingData = loopingData;
-    requestAnimationFrame(this.changeRotation);
-  } 
-  pause() {
-    this.isPlaying = false;
-  }
-  play() {
-    this.isPlaying = true;
-  }
-  lerpColor(colorA, colorB, t) {
-    // Ensure t is in the range [0, 1]
-    t = Math.max(0, Math.min(1, t));
-
-    // Extract the red, green, and blue components of colorA and colorB
-    const rA = colorA >> 16;
-    const gA = (colorA >> 8) & 0xff;
-    const bA = colorA & 0xff;
-
-    const rB = colorB >> 16;
-    const gB = (colorB >> 8) & 0xff;
-    const bB = colorB & 0xff;
-
-    // Interpolate each component
-    const r = Math.round(rA + (rB - rA) * t);
-    const g = Math.round(gA + (gB - gA) * t);
-    const b = Math.round(bA + (bB - bA) * t);
-
-    // Combine the interpolated components into a single color value
-    return (r << 16) | (g << 8) | b;
-  }
-}
-class QuizData {
-  constructor(mainData) {
-    this.mainData = mainData;
-    this.quizItems = new Array();
-    for (let index = 0; index < this.mainData.questions.length; index++) {
-      const quiz = {
-        question: this.mainData.questions[index],
-        options: this.mainData.options[index],
-        image: this.mainData.images[index],
-        answer: this.mainData.answers[index],
-        rewards: this.mainData.rewards[index],
-      };
-      this.quizItems.push(quiz);
-    }
-  }
-  getAll() {
-    return this.quizItems;
-  }
-  getQuizAt(index) {
-    return this.quizItems[index];
-  }
-}
-class PlayerScore
-{
-    constructor()
-    {
-        this.time = new Array();
-        this.correct = 0;
-        this.wrong = 0;
-        this.coin = 0;
-        this.xp = 0;
-    }
-    addCoin(amount)
-    {
-        this.coin += Number(amount);
-    }
-    addXp(amount)
-    {
-        this.xp += Number(amount);
-    }
-    addCorrect()
-    {
-        this.correct += 1;
-    }
-    addWrong()
-    {
-        this.wrong += 1;
-    }
-    addTime(t)
-    {
-        this.time.push(Number(t));
-    }
-    averageTime()
-    {
-        if (this.time.length === 0) {
-            return 0; // To avoid division by zero
-          }
-          const sum = this.time.reduce((total, num) => total + num, 0);
-          return (sum / this.time.length).toFixed(2);
-    }
-}
-class User
-{
-    constructor(userName, point, rank)
-    {
-        this.userName=userName;
-        this.points=point;
-        this.rank = rank;
-    }
-
-}
-class LeaderBoardUsers
-{
-    constructor(data)
-    {
-        this.mainData  = data;
-        this.users = new Array();
-        for (let index = 0; index < this.mainData.name.length; index++) 
-        {
-            const userName = this.mainData.name[index];
-            const point = this.mainData.points[index];
-            const rank = this.mainData.rank[index];
-            const user = new User(userName, point, rank);
-            this.users.push(user);
-            console.log(user);
-        }
-        this.users.sort((a,b)=>a.rank - b.rank);
-
-    }
-    getUsers()
-    {
-        return this.users;
-    }
-    getOrderedUsers()
-    {
-
-    }
-}
 const mockUsers =
 {
     name:
@@ -480,6 +85,9 @@ const quizDataElements = new Map([
   ["xpstats-txt", "l-xp-summary"],
   ["playerscore-txt", "l-yourscore-summary"],
   ["clock-img", "img-clock-quiz"],
+  ["user1-txt", "l-user1-quiz"],
+  ["user2-txt", "l-user2-quiz"],
+  ["user3-txt", "l-user3-quiz"],
   
 ]);
 const startPrompts =[
@@ -488,20 +96,116 @@ const startPrompts =[
     "1",
     "Start!",
 ]
-const promptText = document.getElementById('l-prompt-quiz');
-let count = 0;
-let promptInterval = setInterval(()=>{
+var userDataRecieved = false;
+const createUserEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/createUser";
+setUserDetails({email:'xyz@gmail.com', userName:'Big boy'});
+//setUserDetails(null);
 
-    promptText.textContent = startPrompts[count];
-    const fontScaleAnimation = new animation(promptText);
-    const fontOpacityAnimation = new animation(promptText);
-    if(count>=startPrompts.length-1)
+//Call this function from flutter webview widget
+async function setUserDetails(data)
+{
+  await createUser(data);
+  quizUser.email = data?.email ??'guest@dodonews.app';
+  quizUser.userName = data?.userName??'guest';
+  userDataRecieved  = true;
+  entryPoint();
+}
+async function createUser(data) {
+  // Your asynchronous code here
+  if(data!= null && data.email!=null)
+  {
+    try{
+      fetch(createUserEndPoint,{
+        method:'POST',
+        mode:'cors',
+        headers: {
+          'content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "email": data.email,
+          "userName": data.userName,
+        })
+  
+      }).then(response=>{
+        if(!response.ok)
+        throw new Error('Network response was not ok');
+        return response.json();
+      }).then(data=>{
+        console.log(data);
+      })
+    } 
+    catch(err)
     {
-      fontScaleAnimation.animateFontSize(0.2, {start:300, end:500});
-      setTimeout(()=>{ fontOpacityAnimation.animateOpacity(0.5, {start:1, end:0});},1000)
+      console.log(err.message);
+    } 
+   
+  }
+}
+
+
+let quizData = new QuizData(mockQuizData);
+let url = "https://thejusunny.github.io/DodoQuiz/";
+if(!window.location.href.includes('index.html'))
+{
+  url = window.location.href;
+  console.log("Using currentPage URL");
+}
+else
+  console.log("Using default URL"+ url);
+quizUser.quizId = url;
+const getQuizEndPoint = `https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/getQuiz?url=${url}`;
+fetch(getQuizEndPoint,
+  {
+    method:'GET',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then(resposne=>{
+    if(!resposne.ok)
+    {
+      throw new Error('Network response was not ok');
     }
-    else 
-      fontScaleAnimation.animateFontSize(0.5, {start:600, end:300});
+    return resposne.json();
+  }).then(data=>{
+    
+    quizData = new QuizData(data.quiz);
+    createQuizPages();
+
+  });
+const rootContainer = document.getElementById("root-page");
+const quizContainer = document.getElementById("quiz-page");//Page to be cloned
+const summaryContainer = document.getElementById("quiz-summary-page"); // Last page of the quiz/results page
+const overlayElement = document.getElementById("overlay");
+
+const noOfQuiz = 4;
+const correctConstant = 200;
+
+
+const leaderBoardUsers = new LeaderBoardUsers(mockUsers);
+const playerScore = new  PlayerScore(); 
+
+let clockAnimation;
+var meterFillAnimation = null;
+const quizDuration = 5;
+
+//entryPoint();// app starts here 
+function entryPoint()
+{
+  //createQuizPages(); //cloning pages 
+  const promptText = document.getElementById('l-prompt-quiz');
+  let count = 0;
+  let promptInterval = setInterval(()=>{
+
+  promptText.textContent = startPrompts[count];
+  const fontScaleAnimation = new Animation(promptText);
+  const fontOpacityAnimation = new Animation(promptText);
+    if (count >= startPrompts.length - 1) {
+      fontScaleAnimation.animateFontSize(0.2, { start: 300, end: 500 });
+      setTimeout(() => {
+        fontOpacityAnimation.animateOpacity(0.5, { start: 1, end: 0 });
+      }, 1000);
+    } else fontScaleAnimation.animateFontSize(0.5, { start: 600, end: 300 });
     
     fontOpacityAnimation.animateOpacity(0.25, {start:0, end:1});
     if(count>=startPrompts.length)
@@ -513,7 +217,7 @@ let promptInterval = setInterval(()=>{
     }
     count++;
 }, 1500);
-
+}
 /*
 (c/tq * 0.5/avgt)*c1+ 0.2/avgt*5;  
 3/3 * 1* 20 + 1*15;
@@ -522,17 +226,8 @@ let promptInterval = setInterval(()=>{
 10+4 = 14
 
 */
-
-const correctConstant = 200;
-const quizData = new QuizData(mockQuizData);
-const leaderBoardUsers = new LeaderBoardUsers(mockUsers);
-const playerScore = new  PlayerScore(); 
-const overlayElement = document.getElementById("overlay");
-let clockAnimation;
-//overlayElement.addEventListener("click", startQuiz);
-var meterFillAnimation = null;
-const quizDuration = 5;
-function startQuiz() {
+function startQuiz() 
+{
   overlayElement.style.display = "none";
   setupQuiz();
 }
@@ -559,7 +254,7 @@ function setupQuiz() {
     OptionSelected(4, btn4);
   });
 
-  meterFillAnimation = new animation(meterFillImg);
+  meterFillAnimation = new Animation(meterFillImg);
   meterFillAnimation.animateHeight(quizDuration, { start: 100, end: 0.01 }, () => {
     meterFillAnimation.pause();
     timerRanOut();
@@ -567,20 +262,12 @@ function setupQuiz() {
    colorChangeTimeout =  setTimeout(() => {
         meterFillImg.style.backgroundColor ='red';
         const clockImg = getElementsFromCurrentPage('clock-img');
-        clockAnimation = new animation(clockImg);
+        clockAnimation = new Animation(clockImg);
         clockAnimation.animateRotation(0.1,{start:345, end:375}, {infinite:true,loops:0, pingpong: false});
         setTimeout(()=>{
           clockAnimation.pause();
         },3000);
-    }, (quizDuration*1000)*0.7);
-    // meterColorChangeAnimation.animatecolor(0.5,
-    //     {
-    //         start:rgbToHex({ red: 0, green: 0, blue: 128 }),
-    //         end:rgbToHex({ red: 220, green: 0, blue: 0 })
-    //     },
-    // );
-    // meterFillImg.style.backgroundColor =
-    
+    }, (quizDuration*1000)*0.7);    
 }
 function startNextQuiz() {
   if (currentPage >= noOfQuiz - 1) {
@@ -599,7 +286,7 @@ function OptionSelected(index, button) {
   clockAnimation?.pause();
   clearTimeout(colorChangeTimeout);
   console.log("Selected" + index);
-  const scaleAnimation = new animation(button);
+  const scaleAnimation = new Animation(button);
 //   button.style.width = 47.5 + "%";
 //   button.style.height = 38 + "%";
   const quizElement = quizData.getQuizAt(currentPage);
@@ -626,7 +313,7 @@ function OptionSelected(index, button) {
     const correctBg = correctButton.querySelector("div");
     const startColor = { red: 229, green: 235, blue: 231 };
     //correctBg.style.backgroundColor ='green';
-    const bgAnim = new animation(correctBg);
+    const bgAnim = new Animation(correctBg);
     bgAnim.animatecolor(
       0.75,
       {
@@ -646,37 +333,6 @@ function disableOptions() {
   div.style.pointerEvents = "none";
 }
 
-function rgbToHex(color) {
-  // Ensure that the RGB values are within the valid range (0-255)
-  color.red = Math.min(255, Math.max(0, color.red));
-  color.green = Math.min(255, Math.max(0, color.green));
-  color.blue = Math.min(255, Math.max(0, color.blue));
-
-  // Convert each RGB component to a two-digit hexadecimal string
-  const redHex = color.red.toString(16).padStart(2, "0");
-  const greenHex = color.green.toString(16).padStart(2, "0");
-  const blueHex = color.blue.toString(16).padStart(2, "0");
-
-  // Combine the hexadecimal components to form the full hex color code
-  const hexColor = `0x${redHex}${greenHex}${blueHex}`;
-
-  return hexColor;
-}
-function hex0xToRgb(hex0x) {
-  // Extract the red, green, and blue components from the 0xRRGGBB value
-  const red = (hex0x >> 16) & 0xff;
-  const green = (hex0x >> 8) & 0xff;
-  const blue = hex0x & 0xff;
-
-  return `rgb(${red}, ${green}, ${blue})`;
-}
-const rootContainer = document.getElementById("root-page");
-const quizContainer = document.getElementById("quiz-page");
-const summaryContainer = document.getElementById("quiz-summary-page");
-const noOfQuiz = 4;
-
-createQuizPages();
-const pages = new Array();
 function updateSummaryUI()
 {
     const timeText = getElementsFromCurrentPage('timestats-txt');
@@ -691,6 +347,10 @@ function updateSummaryUI()
     correctText.textContent = playerScore.correct;
     wrongText.textContent = playerScore.wrong;
     scoreText.textContent = GetScore().toFixed(1);
+    const user1Text = getElementsFromCurrentPage('user1-txt');
+    const user2Text = getElementsFromCurrentPage('user2-txt');
+    const user3Text = getElementsFromCurrentPage('user3-txt');
+    user2Text.textContent = quizUser.userName;
 }
 function GetScore()
 {
@@ -766,9 +426,9 @@ function getCurrentQuiz()
 {
     return quizData.getQuizAt(currentPage);
 }
+
 let currentPage = 0;
 let scrollPosition = 0;
-// scrollToPage(3);
 function scrollToPage(page) {
   scrollPosition = page * window.innerWidth;
   rootContainer.scrollTo({ left: scrollPosition, behavior: "smooth" });
@@ -779,6 +439,22 @@ function scrollToNext() {
   rootContainer.scrollTo({ left: scrollPosition, behavior: "smooth" });
 }
 //setTimeout(scrollBack,5000);
-function scrollBack() {
-  scrollToPage(0);
+
+
+//Utility functions
+function rgbToHex(color) {
+  // Ensure that the RGB values are within the valid range (0-255)
+  color.red = Math.min(255, Math.max(0, color.red));
+  color.green = Math.min(255, Math.max(0, color.green));
+  color.blue = Math.min(255, Math.max(0, color.blue));
+
+  // Convert each RGB component to a two-digit hexadecimal string
+  const redHex = color.red.toString(16).padStart(2, "0");
+  const greenHex = color.green.toString(16).padStart(2, "0");
+  const blueHex = color.blue.toString(16).padStart(2, "0");
+
+  // Combine the hexadecimal components to form the full hex color code
+  const hexColor = `0x${redHex}${greenHex}${blueHex}`;
+
+  return hexColor;
 }
