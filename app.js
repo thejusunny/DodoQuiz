@@ -3,9 +3,6 @@ import { QuizUser } from "./user.js";
 import { PlayerScore } from "./quizdata.js";
 import { LeaderBoardUsers } from "./quizdata.js";
 import { Animation } from "./animation.js";
-
-const quizUser = new QuizUser();
-
 const mockUsers =
 {
     name:
@@ -35,6 +32,9 @@ const mockUsers =
 
 };
 const mockQuizData = {
+  name:"DodoQuizGame",
+  data:{
+    
   questions: [
     "Who is developed GTA 5?",
     "Who is the lead character in GTA 5?",
@@ -60,7 +60,207 @@ const mockQuizData = {
     ["5", "200"],
     ["5", "100"],
   ],
+  }
+  
 };
+let quizData = new QuizData(mockQuizData);
+let url = "https://thejusunny.github.io/DodoQuiz/";
+const splashScreenDuration = 4;
+let splashStartTime;
+const splashScreen = document.getElementById ("div-splash-quiz");
+const currentUser = new QuizUser();
+let cachedUserData = null;
+ //*******Call this function from flutter webview widget********
+function cacheUserDataFromApp(data)
+{
+  cachedUserData = data;
+}
+loadSplashScreen();
+ function loadSplashScreen()
+ {
+  splashStartTime = performance.now();
+  const lottieContainer = document.getElementById('div-lottiebig-quiz');
+  const lottierLoaderContainer = document.getElementById('div-lottieloader-quiz');
+  const animationConfig1 = {
+  container: lottieContainer,
+  renderer: 'svg', // You can choose 'svg', 'canvas', or 'html'
+  loop: true, // Set to true if you want the animation to loop
+  autoplay: true, // Set to true if you want the animation to play automatically
+  path: './animations/bearanimation.json', // Replace with the path to your Lottie animation JSON file
+  };
+  const animationConfig2 = {
+    container: lottierLoaderContainer,
+    renderer: 'svg', // You can choose 'svg', 'canvas', or 'html'
+    loop: true, // Set to true if you want the animation to loop
+    autoplay: true, // Set to true if you want the animation to play automatically
+    path: './animations/loading.json', // Replace with the path to your Lottie animation JSON file
+    };
+  const animation1 = lottie.loadAnimation(animationConfig1);
+  const animation2 = lottie.loadAnimation(animationConfig2);
+  getQuizInformation();
+  cacheUserDataFromApp({email:"Athul@example.com", userName:"Athul"});
+ }
+async function getQuizInformation()
+{
+if(!window.location.href.includes('index.html'))
+{
+  url = window.location.href;
+  console.log("Using currentPage URL");
+}
+else
+  console.log("Using default URL"+ url);
+currentUser.quizId = url;
+const getQuizEndPoint = `https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/getQuiz?url=${url}`;
+fetch(getQuizEndPoint,
+  {
+    method:'GET',
+    mode: 'cors',
+    headers: {
+      'content-Type': 'application/json',
+    },
+  }).then(resposne=>{
+    if(!resposne.ok)
+    {
+      throw new Error('Network response was not ok');
+    }
+    return resposne.json();
+  }).then(data=>{
+    
+    quizData = new QuizData(data.quiz);
+    console.log(quizData.name);
+    fetchAndsortAllQuizUsers(quizData.name);
+    //createQuizPages();
+
+  });
+}
+let splashTimeElapsed = false;
+let mainDataLoaded  = false;
+const splashInterval = setInterval(()=>{
+  const delta = performance.now()-splashStartTime;
+  if(delta>splashScreenDuration && mainDataLoaded)
+  {
+      splashTimeElapsed = true;
+      splashScreen.style.display ='none';
+      clearInterval(splashInterval);
+  }
+}, 1000);
+
+
+
+  //animation2.play();
+ 
+
+
+  //setUserDetails({email:'Athul@example.com', userName:'Athul'});
+  //setUserDetails(null);
+  
+  const createUserEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/createUser";
+  async function FetchUserData()
+  {
+    await createUser(cachedUserData);
+    
+     // either create a user or dont create if duplicate exist
+    currentUser.email = cachedUserData?.email ??'guest@dodonews.app';
+    currentUser.userName = cachedUserData?.userName??'guest';
+    if(currentUser.userName =='guest')
+    {
+        console.log("User needs to sign in to access quiz");
+    }
+    else
+    {
+      entryPoint();
+    }
+    //entryPoint();
+  }
+
+
+
+  async function createUser(data) {
+    // Your asynchronous code here
+    if(data!= null && data.email!=null)
+    {
+      try{
+        fetch(createUserEndPoint,{
+          method:'POST',
+          mode:'cors',
+          headers: {
+            'content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            "email": data.email,
+            "userName": data.userName,
+          })
+    
+        }).then(response=>{
+          if(!response.ok)
+          throw new Error('Network response was not ok');
+          return response.json();
+        }).then(data=>{
+          console.log(data);
+        })
+      } 
+      catch(err)
+      {
+        console.log(err.message);
+      } 
+     
+    }
+  }
+  const getAllQuizUsersEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/getQuizUsers";
+  let sortedUsers = new Array();
+  
+  async function fetchAndsortAllQuizUsers(quizName)
+  {
+    const endPoint = `${getAllQuizUsersEndPoint}?quizName=${quizName}`;
+    fetch(endPoint,
+      {
+        method:'GET',
+        mode:'cors',
+        headers:{
+          'content-Type':'application/json',
+        }
+      }).then(response=>{
+        if(!response.ok)
+        {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      }).then(data=>{
+        sortedUsers = data.users;
+        sortedUsers.sort((a,b)=> b.quizStats[0].stats.points -a.quizStats[0].stats.points);
+        sortedUsers.forEach(user => {
+          console.log(user);
+        });
+        const index =  sortedUsers.findIndex((item)=> item.email == currentUser.email);
+       
+        if(index<0)
+        {
+          console.log("No user found in the same quiz");
+          FetchUserData();
+        }
+        else
+        {
+          console.log("Found user at rank"+ (index+1));
+          const user = sortedUsers[index];
+          playerScore.points = user.quizStats[0].stats.points;
+          playerScore.correct = user.quizStats[0].stats.correct;
+          playerScore.wrong = user.quizStats[0].stats.wrong;
+          playerScore.coins = user.quizStats[0].stats.coins;
+          playerScore.time = user.quizStats[0].stats.time;
+          playerScore.xp = user.quizStats[0].stats.xp;
+          noOfQuiz=0;
+          scrollToPage(1);
+          updateSummaryUI();
+         
+        }
+        mainDataLoaded = true;
+          
+      });
+  }
+
+
+
+
 const quizDataElements = new Map([
   ["coin-txt", "l-coin-quiz"],
   ["xp-txt", "l-xp-quiz"],
@@ -88,7 +288,15 @@ const quizDataElements = new Map([
   ["user1-txt", "l-user1-quiz"],
   ["user2-txt", "l-user2-quiz"],
   ["user3-txt", "l-user3-quiz"],
-  
+  ["rank1-txt", "l-rank1-quiz"],
+  ["rank2-txt", "l-rank2-quiz"],
+  ["rank3-txt", "l-rank3-quiz"],
+  ["points1-txt", "l-points1-quiz"],
+  ["points2-txt", "l-points2-quiz"],
+  ["points3-txt", "l-points3-quiz"],
+  ["pp1-img", "img-pp1-quiz"],
+  ["pp2-img", "img-pp2-quiz"],
+  ["pp3-img", "img-pp3-quiz"],
 ]);
 const startPrompts =[
     "3",
@@ -97,88 +305,20 @@ const startPrompts =[
     "Start!",
 ]
 var userDataRecieved = false;
-const createUserEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/createUser";
-setUserDetails({email:'xyz@gmail.com', userName:'Big boy'});
-//setUserDetails(null);
 
-//Call this function from flutter webview widget
-async function setUserDetails(data)
-{
-  await createUser(data);
-  quizUser.email = data?.email ??'guest@dodonews.app';
-  quizUser.userName = data?.userName??'guest';
-  userDataRecieved  = true;
-  entryPoint();
-}
-async function createUser(data) {
-  // Your asynchronous code here
-  if(data!= null && data.email!=null)
-  {
-    try{
-      fetch(createUserEndPoint,{
-        method:'POST',
-        mode:'cors',
-        headers: {
-          'content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          "email": data.email,
-          "userName": data.userName,
-        })
-  
-      }).then(response=>{
-        if(!response.ok)
-        throw new Error('Network response was not ok');
-        return response.json();
-      }).then(data=>{
-        console.log(data);
-      })
-    } 
-    catch(err)
-    {
-      console.log(err.message);
-    } 
-   
-  }
-}
+// async function populateLeaderBoards ()
+// {
+//   updateSummaryUI();
+// }
 
 
-let quizData = new QuizData(mockQuizData);
-let url = "https://thejusunny.github.io/DodoQuiz/";
-if(!window.location.href.includes('index.html'))
-{
-  url = window.location.href;
-  console.log("Using currentPage URL");
-}
-else
-  console.log("Using default URL"+ url);
-quizUser.quizId = url;
-const getQuizEndPoint = `https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/getQuiz?url=${url}`;
-fetch(getQuizEndPoint,
-  {
-    method:'GET',
-    mode: 'cors',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  }).then(resposne=>{
-    if(!resposne.ok)
-    {
-      throw new Error('Network response was not ok');
-    }
-    return resposne.json();
-  }).then(data=>{
-    
-    quizData = new QuizData(data.quiz);
-    createQuizPages();
 
-  });
 const rootContainer = document.getElementById("root-page");
 const quizContainer = document.getElementById("quiz-page");//Page to be cloned
 const summaryContainer = document.getElementById("quiz-summary-page"); // Last page of the quiz/results page
 const overlayElement = document.getElementById("overlay");
 
-const noOfQuiz = 4;
+let noOfQuiz = 4;
 const correctConstant = 200;
 
 
@@ -336,21 +476,24 @@ function disableOptions() {
 function updateSummaryUI()
 {
     const timeText = getElementsFromCurrentPage('timestats-txt');
-    const scoreText = getElementsFromCurrentPage('playerscore-txt');
+
     const coinText = getElementsFromCurrentPage('coinstats-txt');
     const xpText = getElementsFromCurrentPage('xpstats-txt');
     const correctText = getElementsFromCurrentPage('correctstats-txt');
     const wrongText = getElementsFromCurrentPage('wrongstats-txt');
+
+    const points2Text = getElementsFromCurrentPage('points2-txt');
     timeText.textContent = playerScore.averageTime();
-    coinText.textContent = playerScore.coin;
+    coinText.textContent = playerScore.coins;
     xpText.textContent = playerScore.xp;
     correctText.textContent = playerScore.correct;
     wrongText.textContent = playerScore.wrong;
-    scoreText.textContent = GetScore().toFixed(1);
+
+    points2Text.textContent = playerScore.points;
     const user1Text = getElementsFromCurrentPage('user1-txt');
     const user2Text = getElementsFromCurrentPage('user2-txt');
     const user3Text = getElementsFromCurrentPage('user3-txt');
-    user2Text.textContent = quizUser.userName;
+    user2Text.textContent = currentUser.userName;
 }
 function GetScore()
 {
@@ -430,6 +573,7 @@ function getCurrentQuiz()
 let currentPage = 0;
 let scrollPosition = 0;
 function scrollToPage(page) {
+  currentPage = page;
   scrollPosition = page * window.innerWidth;
   rootContainer.scrollTo({ left: scrollPosition, behavior: "smooth" });
 }

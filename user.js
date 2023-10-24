@@ -4,7 +4,7 @@ export class QuizUser
     {
         this.quizId ="";
         this.email = "";
-        this.points = 0;
         this.userName = "";
+       
     }
 }

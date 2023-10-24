@@ -1,7 +1,8 @@
 export class QuizData {
-    constructor(mainData) {
-      this.mainData = mainData;
+    constructor(quizData) {
+      this.mainData = quizData.data;
       this.quizItems = new Array();
+      this.name = quizData.name;
       for (let index = 0; index < this.mainData.questions.length; index++) {
         const quiz = {
           question: this.mainData.questions[index],
@@ -24,15 +25,17 @@ export class QuizData {
   {
       constructor()
       {
-          this.time = new Array();
+          this.timeArray = new Array();
           this.correct = 0;
           this.wrong = 0;
-          this.coin = 0;
+          this.coins = 0;
           this.xp = 0;
+          this.points = 0;
+          this.time = 0;
       }
       addCoin(amount)
       {
-          this.coin += Number(amount);
+          this.coins += Number(amount);
       }
       addXp(amount)
       {
@@ -48,15 +51,16 @@ export class QuizData {
       }
       addTime(t)
       {
-          this.time.push(Number(t));
+          this.timeArray.push(Number(t));
       }
       averageTime()
       {
-          if (this.time.length === 0) {
+          if (this.timeArray.length === 0) {
               return 0; // To avoid division by zero
             }
-            const sum = this.time.reduce((total, num) => total + num, 0);
-            return (sum / this.time.length).toFixed(2);
+            const sum = this.timeArray.reduce((total, num) => total + num, 0);
+            this.time = (sum / this.timeArray.length).toFixed(2);
+            return this.time;
       }
   }
 class User
@@ -82,7 +86,7 @@ export class LeaderBoardUsers
             const rank = this.mainData.rank[index];
             const user = new User(userName, point, rank);
             this.users.push(user);
-            console.log(user);
+            //console.log(user);
         }
         this.users.sort((a,b)=>a.rank - b.rank);
 
