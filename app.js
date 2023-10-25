@@ -3,6 +3,14 @@ import { QuizUser } from "./user.js";
 import { PlayerScore } from "./quizdata.js";
 import { LeaderBoardUsers } from "./quizdata.js";
 import { Animation } from "./animation.js";
+let deviceID = localStorage.getItem('deviceID');
+if(!deviceID)
+{ 
+    deviceID = uuid.v4();
+    localStorage.setItem('deviceID', deviceID);
+}
+console.log(deviceID);
+
 const mockUsers =
 {
     name:
@@ -70,68 +78,81 @@ let splashStartTime;
 const splashScreen = document.getElementById ("div-splash-quiz");
 const currentUser = new QuizUser();
 let cachedUserData = null;
+const overlayElement = document.getElementById("overlay");
+let leaderBoardUsers ;
+const playerScore = new PlayerScore(); 
  //*******Call this function from flutter webview widget********
 function cacheUserDataFromApp(data)
 {
   cachedUserData = data;
 }
-loadSplashScreen();
- function loadSplashScreen()
- {
-  splashStartTime = performance.now();
-  const lottieContainer = document.getElementById('div-lottiebig-quiz');
-  const lottierLoaderContainer = document.getElementById('div-lottieloader-quiz');
-  const animationConfig1 = {
-  container: lottieContainer,
-  renderer: 'svg', // You can choose 'svg', 'canvas', or 'html'
-  loop: true, // Set to true if you want the animation to loop
-  autoplay: true, // Set to true if you want the animation to play automatically
-  path: './animations/bearanimation.json', // Replace with the path to your Lottie animation JSON file
+function getLocalUserData()
+{
+  return {
+    email: deviceID+'@guest.com',
+    userName: "guest"+deviceID.substring(0,5)
   };
-  const animationConfig2 = {
-    container: lottierLoaderContainer,
+}
+loadSplashScreen();
+function loadSplashScreen()
+ {
+    splashStartTime = performance.now();
+    const lottieContainer = document.getElementById('div-lottiebig-quiz');
+    const lottierLoaderContainer = document.getElementById('div-lottieloader-quiz');
+    const animationConfig1 = {
+    container: lottieContainer,
     renderer: 'svg', // You can choose 'svg', 'canvas', or 'html'
     loop: true, // Set to true if you want the animation to loop
     autoplay: true, // Set to true if you want the animation to play automatically
-    path: './animations/loading.json', // Replace with the path to your Lottie animation JSON file
+    path: './animations/bearanimation.json', // Replace with the path to your Lottie animation JSON file
     };
-  const animation1 = lottie.loadAnimation(animationConfig1);
-  const animation2 = lottie.loadAnimation(animationConfig2);
-  getQuizInformation();
-  cacheUserDataFromApp({email:"Athul@example.com", userName:"Athul"});
+    const animationConfig2 = {
+      container: lottierLoaderContainer,
+      renderer: 'svg', // You can choose 'svg', 'canvas', or 'html'
+      loop: true, // Set to true if you want the animation to loop
+      autoplay: true, // Set to true if you want the animation to play automatically
+      path: './animations/loading.json', // Replace with the path to your Lottie animation JSON file
+      };
+    const animation1 = lottie.loadAnimation(animationConfig1);
+    const animation2 = lottie.loadAnimation(animationConfig2);
+    //cacheUserDataFromApp({email:'Athul@example.com', userName:'Athul'});
+    cacheUserDataFromApp(getLocalUserData());
+    getQuizInformation();
  }
 async function getQuizInformation()
 {
-if(!window.location.href.includes('index.html'))
-{
-  url = window.location.href;
-  console.log("Using currentPage URL");
-}
-else
-  console.log("Using default URL"+ url);
-currentUser.quizId = url;
-const getQuizEndPoint = `https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/getQuiz?url=${url}`;
-fetch(getQuizEndPoint,
+  if(!window.location.href.includes('index.html'))
   {
-    method:'GET',
-    mode: 'cors',
-    headers: {
-      'content-Type': 'application/json',
-    },
-  }).then(resposne=>{
-    if(!resposne.ok)
+    url = window.location.href;
+    console.log("Using currentPage URL");
+  }
+  else
+    console.log("Using default URL"+ url);
+  currentUser.quizId = url;
+  const getQuizEndPoint = `https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/getQuiz?url=${url}`;
+  fetch(getQuizEndPoint,
     {
-      throw new Error('Network response was not ok');
-    }
-    return resposne.json();
-  }).then(data=>{
-    
-    quizData = new QuizData(data.quiz);
-    console.log(quizData.name);
-    fetchAndsortAllQuizUsers(quizData.name);
-    //createQuizPages();
+      method:'GET',
+      mode: 'cors',
+      headers: {
+        'content-Type': 'application/json',
+      },
+    }).then(resposne=>{
+      if(!resposne.ok)
+      {
+        throw new Error('Network response was not ok');
+      }
+      return resposne.json();
+    }).then(data=>{
+      
+      quizData = new QuizData(data.quiz);
+      noOfQuiz = quizData.getQuizCount();
+      console.log(quizData.quizName + " count:"+ noOfQuiz);
+      fetchCurrentUserData();
+      fetchAndsortAllQuizUsers();
+      //createQuizPages();
 
-  });
+    });
 }
 let splashTimeElapsed = false;
 let mainDataLoaded  = false;
@@ -142,9 +163,23 @@ const splashInterval = setInterval(()=>{
       splashTimeElapsed = true;
       splashScreen.style.display ='none';
       clearInterval(splashInterval);
+      //createQuizPages();
   }
-}, 1000);
+}, 200);
 
+function loadQuiz()
+{
+  createQuizPages();
+  startCountDown();
+}
+function showUserSummary()
+{
+    overlayElement.style.display = "none";  
+    noOfQuiz=0;
+    leaderBoardUsers = new LeaderBoardUsers(sortedUsers,currentUser.rank,quizData);
+    scrollToPage(1);
+    updateSummaryUI();
+}
 
 
   //animation2.play();
@@ -155,22 +190,43 @@ const splashInterval = setInterval(()=>{
   //setUserDetails(null);
   
   const createUserEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/createUser";
-  async function FetchUserData()
+  async function fetchCurrentUserData()
   {
-    await createUser(cachedUserData);
     
+    if(cachedUserData.email.includes('guest'))
+    {
+      cachedUserData = getLocalUserData();
+    }
+    createUser(cachedUserData);
      // either create a user or dont create if duplicate exist
-    currentUser.email = cachedUserData?.email ??'guest@dodonews.app';
-    currentUser.userName = cachedUserData?.userName??'guest';
-    if(currentUser.userName =='guest')
-    {
-        console.log("User needs to sign in to access quiz");
-    }
-    else
-    {
-      entryPoint();
-    }
-    //entryPoint();
+    currentUser.email = cachedUserData?.email;
+    currentUser.userName = cachedUserData?.userName;
+
+  }
+  function checkForUserPresenceInQuiz()
+  {
+      
+    const index = sortedUsers.findIndex((user)=> user.email == currentUser.email);  
+    currentUser.rank = index;
+    if(index<0)
+      {
+        console.log("No user found in the same quiz");
+        loadQuiz();
+      }
+      else
+      {
+        console.log("Found user at rank"+ (index+1));
+        const user = sortedUsers[index];
+        console.log(user);
+        playerScore.points = user.quizStats[0].stats.points;
+        playerScore.correct = user.quizStats[0].stats.correct;
+        playerScore.wrong = user.quizStats[0].stats.wrong;
+        playerScore.coins = user.quizStats[0].stats.coins;
+        playerScore.time = user.quizStats[0].stats.time;
+        playerScore.xp = user.quizStats[0].stats.xp;
+        showUserSummary();
+      }
+      mainDataLoaded = true;
   }
 
 
@@ -184,7 +240,7 @@ const splashInterval = setInterval(()=>{
           method:'POST',
           mode:'cors',
           headers: {
-            'content-Type': 'application/json'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             "email": data.email,
@@ -209,15 +265,15 @@ const splashInterval = setInterval(()=>{
   const getAllQuizUsersEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/getQuizUsers";
   let sortedUsers = new Array();
   
-  async function fetchAndsortAllQuizUsers(quizName)
+  async function fetchAndsortAllQuizUsers()
   {
-    const endPoint = `${getAllQuizUsersEndPoint}?quizName=${quizName}`;
+    const endPoint = `${getAllQuizUsersEndPoint}?quizName=${quizData.quizName}`;
     fetch(endPoint,
       {
         method:'GET',
         mode:'cors',
         headers:{
-          'content-Type':'application/json',
+          'Content-Type':'application/json',
         }
       }).then(response=>{
         if(!response.ok)
@@ -231,30 +287,8 @@ const splashInterval = setInterval(()=>{
         sortedUsers.forEach(user => {
           console.log(user);
         });
-        const index =  sortedUsers.findIndex((item)=> item.email == currentUser.email);
-       
-        if(index<0)
-        {
-          console.log("No user found in the same quiz");
-          FetchUserData();
-        }
-        else
-        {
-          console.log("Found user at rank"+ (index+1));
-          const user = sortedUsers[index];
-          playerScore.points = user.quizStats[0].stats.points;
-          playerScore.correct = user.quizStats[0].stats.correct;
-          playerScore.wrong = user.quizStats[0].stats.wrong;
-          playerScore.coins = user.quizStats[0].stats.coins;
-          playerScore.time = user.quizStats[0].stats.time;
-          playerScore.xp = user.quizStats[0].stats.xp;
-          noOfQuiz=0;
-          scrollToPage(1);
-          updateSummaryUI();
-         
-        }
-        mainDataLoaded = true;
-          
+        checkForUserPresenceInQuiz();
+
       });
   }
 
@@ -316,21 +350,19 @@ var userDataRecieved = false;
 const rootContainer = document.getElementById("root-page");
 const quizContainer = document.getElementById("quiz-page");//Page to be cloned
 const summaryContainer = document.getElementById("quiz-summary-page"); // Last page of the quiz/results page
-const overlayElement = document.getElementById("overlay");
+
 
 let noOfQuiz = 4;
-const correctConstant = 200;
 
 
-const leaderBoardUsers = new LeaderBoardUsers(mockUsers);
-const playerScore = new  PlayerScore(); 
+
 
 let clockAnimation;
 var meterFillAnimation = null;
 const quizDuration = 5;
 
 //entryPoint();// app starts here 
-function entryPoint()
+function startCountDown()
 {
   //createQuizPages(); //cloning pages 
   const promptText = document.getElementById('l-prompt-quiz');
@@ -412,7 +444,9 @@ function setupQuiz() {
 function startNextQuiz() {
   if (currentPage >= noOfQuiz - 1) {
     scrollToNext();
+    playerScore.finalizeScore(quizData.getQuizCount());
     updateSummaryUI();
+    sendUserStatsToServer();
     return;
   }
   scrollToNext();
@@ -472,7 +506,44 @@ function disableOptions() {
   const div = getElementsFromCurrentPage("options-div");
   div.style.pointerEvents = "none";
 }
-
+function sendUserStatsToServer()
+{
+  const finalUserData =
+    {
+      email: currentUser.email,
+      quizName: quizData.quizName,
+      url: url,
+      stats:{
+        points: playerScore.points,
+        correct: playerScore.correct,
+        wrong: playerScore.wrong,
+        coins: playerScore.coins,
+        xp: playerScore.xp,
+        time: Number( playerScore.averageTime()),
+      }
+       
+    }
+  const upsertStatsEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/upsertQuizStats";
+  try
+  {
+    fetch(upsertStatsEndPoint, {
+      method: 'PUT',
+      headers: 
+      {
+        'Content-Type':'application/json',
+      },
+      body: JSON.stringify(finalUserData)
+    }).then((response)=>{
+      console.log('Put succesful'+ response);
+    });
+  }
+  catch(err)
+  {
+    console.error("Insertion of stats failed"+err);
+  }
+ 
+}
+ 
 function updateSummaryUI()
 {
     const timeText = getElementsFromCurrentPage('timestats-txt');
@@ -483,23 +554,27 @@ function updateSummaryUI()
     const wrongText = getElementsFromCurrentPage('wrongstats-txt');
 
     const points2Text = getElementsFromCurrentPage('points2-txt');
-    timeText.textContent = playerScore.averageTime();
+    
+    timeText.textContent = playerScore.time;
     coinText.textContent = playerScore.coins;
     xpText.textContent = playerScore.xp;
     correctText.textContent = playerScore.correct;
     wrongText.textContent = playerScore.wrong;
 
+    const sortedView = leaderBoardUsers.getSortedView();
     points2Text.textContent = playerScore.points;
-    const user1Text = getElementsFromCurrentPage('user1-txt');
-    const user2Text = getElementsFromCurrentPage('user2-txt');
-    const user3Text = getElementsFromCurrentPage('user3-txt');
-    user2Text.textContent = currentUser.userName;
+    const userText = new Array();
+    userText.push ( getElementsFromCurrentPage('user1-txt'));
+    userText.push ( getElementsFromCurrentPage('user2-txt'));
+    userText.push ( getElementsFromCurrentPage('user3-txt'));
+    for (let index = 0; index < userText.length; index++) {
+      const userName = userText[index];
+      userName.textContent = sortedView[index].userName;
+    } 
+        
+
 }
-function GetScore()
-{
-    const score = (playerScore.correct/noOfQuiz)* (0.5/ playerScore.averageTime())* (correctConstant+ (0.1/playerScore.averageTime())* correctConstant*0.25)
-    return isNaN(score)?0:score;
-}
+
 function createQuizPages() {
   for (let index = 0; index < noOfQuiz; index++) {
     var clonedNode = quizContainer.cloneNode(true);

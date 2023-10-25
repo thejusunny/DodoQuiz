@@ -5,6 +5,7 @@ export class QuizUser
         this.quizId ="";
         this.email = "";
         this.userName = "";
+        this.rank = 0;
        
     }
 }

@@ -2,7 +2,7 @@ export class QuizData {
     constructor(quizData) {
       this.mainData = quizData.data;
       this.quizItems = new Array();
-      this.name = quizData.name;
+      this.quizName = quizData.name;
       for (let index = 0; index < this.mainData.questions.length; index++) {
         const quiz = {
           question: this.mainData.questions[index],
@@ -20,6 +20,10 @@ export class QuizData {
     getQuizAt(index) {
       return this.quizItems[index];
     }
+    getQuizCount()
+    {
+        return this.mainData.questions.length;
+    }
   }
   export class PlayerScore
   {
@@ -32,6 +36,8 @@ export class QuizData {
           this.xp = 0;
           this.points = 0;
           this.time = 0;
+          this. correctConstant = 200;
+
       }
       addCoin(amount)
       {
@@ -51,7 +57,14 @@ export class QuizData {
       }
       addTime(t)
       {
-          this.timeArray.push(Number(t));
+        console.log(t);  
+        this.timeArray.push(Number(t));
+      }
+      finalizeScore(noOfQuiz)
+      {
+        this.time = Number( this.averageTime());
+        this.points = Number( this.GetScore(noOfQuiz))
+
       }
       averageTime()
       {
@@ -59,10 +72,15 @@ export class QuizData {
               return 0; // To avoid division by zero
             }
             const sum = this.timeArray.reduce((total, num) => total + num, 0);
-            this.time = (sum / this.timeArray.length).toFixed(2);
-            return this.time;
+            return (sum / this.timeArray.length).toFixed(2);
       }
-  }
+      GetScore(noOfQuiz)
+      {
+       
+        const score = 100+ (25* this.correct*noOfQuiz);
+        return isNaN(score)?0:score.toFixed(0);
+    }
+}
 class User
 {
     constructor(userName, point, rank)
@@ -75,22 +93,122 @@ class User
 }
 export class LeaderBoardUsers
 {
-    constructor(data)
+    constructor(sortedUsers, userIndex, quizData)
     {
-        this.mainData  = data;
-        this.users = new Array();
-        for (let index = 0; index < this.mainData.name.length; index++) 
+        this.sortedUsers = sortedUsers;
+        this.userIndex = userIndex;
+        this.sortedView = new Array();
+        this.quizData = quizData;
+        if(sortedUsers.length>=3)
         {
-            const userName = this.mainData.name[index];
-            const point = this.mainData.points[index];
-            const rank = this.mainData.rank[index];
-            const user = new User(userName, point, rank);
-            this.users.push(user);
-            //console.log(user);
+            if(userIndex===0)
+            {
+                const user1 ={
+                    userName:sortedUsers[userIndex].userName,
+                    points: sortedUsers[userIndex].quizStats[0].stats.points,
+                };
+                const user2 ={
+                    userName:sortedUsers[userIndex+1].userName,
+                    points: sortedUsers[userIndex+1].quizStats[0].stats.points,
+                };
+                const user3 ={
+                    userName:sortedUsers[userIndex+2].userName,
+                    points: sortedUsers[userIndex+2].quizStats[0].stats.points,
+                };
+                this.sortedView.push (user1);
+                this.sortedView.push (user2);
+                this.sortedView.push (user3);
+            }
+            else
+            {
+                
+                const user1 ={
+                    userName:sortedUsers[userIndex+1].userName,
+                    points: sortedUsers[userIndex+1].quizStats[0].stats.points,
+                };
+                const user2 ={
+                    userName:sortedUsers[userIndex].userName,
+                    points: sortedUsers[userIndex].quizStats[0].stats.points,
+                };
+                const user3 ={
+                    userName:sortedUsers[userIndex-1].userName,
+                    points: sortedUsers[userIndex-1].quizStats[0].stats.points,
+                };
+                this.sortedView.push (user1);
+                this.sortedView.push (user2);
+                this.sortedView.push (user3);
+            }
         }
-        this.users.sort((a,b)=>a.rank - b.rank);
+        else
+        {
+            const dummyCount = 3 - sortedUsers.length;
+            const dummyPlayers = this.getDummyPlayers(dummyCount);
+            sortedUsers.forEach(user => {
+                this.sortedView.push({userName: user.userName, points: user.stats[0].points})
+            });
+            dummyPlayers.forEach(dummyPlayer => {
+                this.sortedView.push({userName: dummyPlayer.userName, points: dummyPlayer.points });
+            });
+            this.sortedView.sort((a,b)=>b.points- a.points);
+        }
+        this.sortedView.forEach(user => {
+            console.log(user.userName +":"+user.points);
+        });
 
     }
+    getSortedView()
+    {
+        return this.sortedView;
+    }
+    getDummyPlayers(count)
+    {
+        const names =[
+            "Albin",
+            "Akhil",
+            "Joyal jhon",
+            "Riya James",
+            "Noel Jhon",
+            "Nina",
+            "Akhila",
+            "Sam",
+            "Ahmed",
+            "Pete K"
+        ]
+        const playerNames = this.getRandomDistinctNames(names, count);
+        const quizNo = this.quizData.getQuizCount();
+        const maxScore = quizNo*100;
+        const dummyPlayer = new Array();
+        for (let index = 0; index < count; index++) {
+           
+            const player = {
+                userName: playerNames[index],
+                points : maxScore * this.getRandomNumber(0.3,0.85),
+            }
+            dummyPlayer.push(player);
+        }
+        return dummyPlayer;
+
+    }
+     getRandomNumber(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+    getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+    getRandomDistinctNames(names, count) {
+        if (count >= names.length) {
+          return names; // Return all names if count is greater than or equal to the array length
+        }
+      
+        const shuffledNames = [...names]; // Create a copy of the original array
+        for (let i = shuffledNames.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledNames[i], shuffledNames[j]] = [shuffledNames[j], shuffledNames[i]]; // Shuffle the array
+        }
+      
+        return shuffledNames.slice(0, count); // Get the first 'count' names
+      }
+
     getUsers()
     {
         return this.users;

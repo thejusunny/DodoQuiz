@@ -141,7 +141,7 @@ export class Animation {
         }
       } else {
         if (value.orginalValue > this.offset.end) {
-          console.log(value.orginalValue);
+          // console.log(value.orginalValue);
           requestAnimationFrame(this.changeOpacity);
         }
       }
@@ -213,6 +213,7 @@ export class Animation {
         dir *
         newT *
           Math.abs(this.offset.end - this.offset.start);
+      this.progress = t;
       return { orginalValue:  value,progress:t,  prefixedValue: value + this.units };
     }
     calculateColor(time) {
