@@ -99,21 +99,25 @@ export class LeaderBoardUsers
         this.userIndex = userIndex;
         this.sortedView = new Array();
         this.quizData = quizData;
+        this.userRank = userIndex +1;
         if(sortedUsers.length>=3)
         {
             if(userIndex===0)
             {
                 const user1 ={
                     userName:sortedUsers[userIndex].userName,
-                    points: sortedUsers[userIndex].quizStats[0].stats.points,
+                    points: sortedUsers[userIndex].points,
+                    rank: this.userRank
                 };
                 const user2 ={
                     userName:sortedUsers[userIndex+1].userName,
-                    points: sortedUsers[userIndex+1].quizStats[0].stats.points,
+                    points: sortedUsers[userIndex+1].points,
+                    rank: this.userRank+1
                 };
                 const user3 ={
                     userName:sortedUsers[userIndex+2].userName,
-                    points: sortedUsers[userIndex+2].quizStats[0].stats.points,
+                    points: sortedUsers[userIndex+2].points,
+                    rank: this.userRank+2
                 };
                 this.sortedView.push (user1);
                 this.sortedView.push (user2);
@@ -121,18 +125,21 @@ export class LeaderBoardUsers
             }
             else
             {
-                
+                console.log(userIndex);
                 const user1 ={
-                    userName:sortedUsers[userIndex+1].userName,
-                    points: sortedUsers[userIndex+1].quizStats[0].stats.points,
+                    userName:sortedUsers[userIndex-1].userName,
+                    points: sortedUsers[userIndex-1].points,
+                    rank: this.userRank-1
                 };
                 const user2 ={
                     userName:sortedUsers[userIndex].userName,
-                    points: sortedUsers[userIndex].quizStats[0].stats.points,
+                    points: sortedUsers[userIndex].points,
+                    rank: this.userRank
                 };
                 const user3 ={
-                    userName:sortedUsers[userIndex-1].userName,
-                    points: sortedUsers[userIndex-1].quizStats[0].stats.points,
+                    userName:sortedUsers[userIndex+1].userName,
+                    points: sortedUsers[userIndex+1].points,
+                    rank: this.userRank+1
                 };
                 this.sortedView.push (user1);
                 this.sortedView.push (user2);
@@ -144,15 +151,18 @@ export class LeaderBoardUsers
             const dummyCount = 3 - sortedUsers.length;
             const dummyPlayers = this.getDummyPlayers(dummyCount);
             sortedUsers.forEach(user => {
-                this.sortedView.push({userName: user.userName, points: user.stats[0].points})
+                this.sortedView.push({userName: user.userName, points: user.stats[0].points, rank:0})
             });
             dummyPlayers.forEach(dummyPlayer => {
-                this.sortedView.push({userName: dummyPlayer.userName, points: dummyPlayer.points });
+                this.sortedView.push({userName: dummyPlayer.userName, points: dummyPlayer.points, rank:0 });
             });
             this.sortedView.sort((a,b)=>b.points- a.points);
+            this.sortedView.forEach(user => {
+                user.rank = this.sortedView.findIndex(user)+1;
+            });
         }
         this.sortedView.forEach(user => {
-            console.log(user.userName +":"+user.points);
+            console.log(user.userName +":"+user.rank);
         });
 
     }

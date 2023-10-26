@@ -176,7 +176,7 @@ function showUserSummary()
 {
     overlayElement.style.display = "none";  
     noOfQuiz=0;
-    leaderBoardUsers = new LeaderBoardUsers(sortedUsers,currentUser.rank,quizData);
+    leaderBoardUsers = new LeaderBoardUsers(sorterView,currentUser.rank,quizData);
     scrollToPage(1);
     updateSummaryUI();
 }
@@ -264,7 +264,7 @@ function showUserSummary()
   }
   const getAllQuizUsersEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/getQuizUsers";
   let sortedUsers = new Array();
-  
+  let sorterView = new Array();
   async function fetchAndsortAllQuizUsers()
   {
     const endPoint = `${getAllQuizUsersEndPoint}?quizName=${quizData.quizName}`;
@@ -284,7 +284,12 @@ function showUserSummary()
       }).then(data=>{
         sortedUsers = data.users;
         sortedUsers.sort((a,b)=> b.quizStats[0].stats.points -a.quizStats[0].stats.points);
-        sortedUsers.forEach(user => {
+        sortedUsers.forEach(sortedUser => {
+          const  user = {
+            userName:sortedUser.userName,
+            points: sortedUser.quizStats[0].stats.points,
+          }
+          sorterView.push(user);
           console.log(user);
         });
         checkForUserPresenceInQuiz();
@@ -445,6 +450,11 @@ function startNextQuiz() {
   if (currentPage >= noOfQuiz - 1) {
     scrollToNext();
     playerScore.finalizeScore(quizData.getQuizCount());
+    const newUser= {userName:currentUser.userName, points:playerScore.points};
+    sorterView.push(newUser);
+    sorterView.sort((a,b)=> b.points - a.points);
+    const index = sorterView.findIndex((user)=> user== newUser);
+    leaderBoardUsers = new LeaderBoardUsers(sorterView,index, quizData);
     updateSummaryUI();
     sendUserStatsToServer();
     return;
@@ -563,13 +573,26 @@ function updateSummaryUI()
 
     const sortedView = leaderBoardUsers.getSortedView();
     points2Text.textContent = playerScore.points;
-    const userText = new Array();
-    userText.push ( getElementsFromCurrentPage('user1-txt'));
-    userText.push ( getElementsFromCurrentPage('user2-txt'));
-    userText.push ( getElementsFromCurrentPage('user3-txt'));
-    for (let index = 0; index < userText.length; index++) {
-      const userName = userText[index];
+    const userTexts = new Array();
+    const rankTexts = new Array();
+    const pointTexts = new Array();
+    userTexts.push ( getElementsFromCurrentPage('user1-txt'));
+    userTexts.push ( getElementsFromCurrentPage('user2-txt'));
+    userTexts.push ( getElementsFromCurrentPage('user3-txt'));
+    
+    pointTexts.push ( getElementsFromCurrentPage('points1-txt'));
+    pointTexts.push ( getElementsFromCurrentPage('points2-txt'));
+    pointTexts.push ( getElementsFromCurrentPage('points3-txt'));
+
+    rankTexts.push ( getElementsFromCurrentPage('rank1-txt'));
+    rankTexts.push ( getElementsFromCurrentPage('rank2-txt'));
+    rankTexts.push ( getElementsFromCurrentPage('rank3-txt'));
+
+    for (let index = 0; index < userTexts.length; index++) {
+      const userName = userTexts[index];
       userName.textContent = sortedView[index].userName;
+      pointTexts[index].textContent = sortedView[index].points;
+      rankTexts[index].textContent = sortedView[index].rank;
     } 
         
 
