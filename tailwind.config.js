@@ -19,6 +19,8 @@ module.exports = {
     {
       'Monteserrat': ['Montserrat','sans-serif'],
       'Monteserrat-bold': ['Montserrat-bold','sans-serif'],
+      'Monteserrat-black': ['Montserrat-black','sans-serif'],
+      'Monteserrat-elight': ['Montserrat-elight','sans-serif'],
     }
   },
   plugins: [

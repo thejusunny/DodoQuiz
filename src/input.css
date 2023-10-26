@@ -9,3 +9,11 @@
     font-family:'Montserrat-bold';
     src: url("../fonts/montserrat/Montserrat-Bold.ttf") format('truetype');
 }
+@font-face {
+    font-family:'Montserrat-black';
+    src: url("../fonts/montserrat/Montserrat-Black.ttf") format('truetype');
+}
+@font-face {
+    font-family:'Montserrat-elight';
+    src: url("../fonts/montserrat/Montserrat-ExtraLight.ttf") format('truetype');
+}

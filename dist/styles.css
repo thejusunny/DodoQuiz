@@ -862,15 +862,6 @@ video {
   border-width: 2px;
 }
 
-.border {
-  border-width: 1px;
-}
-
-.border-blue-400 {
-  --tw-border-opacity: 1;
-  border-color: rgb(96 165 250 / var(--tw-border-opacity));
-}
-
 .bg-blue-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(219 234 254 / var(--tw-bg-opacity));
@@ -969,6 +960,14 @@ video {
   font-family: Montserrat-bold, sans-serif;
 }
 
+.font-Monteserrat-black {
+  font-family: Montserrat-black, sans-serif;
+}
+
+.font-Monteserrat-elight {
+  font-family: Montserrat-elight, sans-serif;
+}
+
 .text-3xl {
   font-size: 1.875rem;
   line-height: 2.25rem;
@@ -1014,6 +1013,16 @@ video {
   color: rgb(254 240 138 / var(--tw-text-opacity));
 }
 
+.text-gray-500 {
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+
+.text-gray-600 {
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
+}
+
 .shadow-lg {
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
@@ -1036,6 +1045,18 @@ video {
   font-family:'Montserrat-bold';
 
   src: url("../fonts/montserrat/Montserrat-Bold.ttf") format('truetype');
+}
+
+@font-face {
+  font-family:'Montserrat-black';
+
+  src: url("../fonts/montserrat/Montserrat-Black.ttf") format('truetype');
+}
+
+@font-face {
+  font-family:'Montserrat-elight';
+
+  src: url("../fonts/montserrat/Montserrat-ExtraLight.ttf") format('truetype');
 }
 
 @media (min-width: 640px) {
@@ -1062,6 +1083,16 @@ video {
   .sm\:text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
+  }
+
+  .sm\:text-3xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+
+  .sm\:text-4xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
   }
 
   .sm\:text-5xl {
@@ -1107,6 +1138,11 @@ video {
     line-height: 2.25rem;
   }
 
+  .md\:text-4xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+
   .md\:text-6xl {
     font-size: 3.75rem;
     line-height: 1;
@@ -1141,8 +1177,23 @@ video {
     line-height: 2.5rem;
   }
 
+  .lg\:text-7xl {
+    font-size: 4.5rem;
+    line-height: 1;
+  }
+
+  .lg\:text-8xl {
+    font-size: 6rem;
+    line-height: 1;
+  }
+
   .lg\:text-9xl {
     font-size: 8rem;
+    line-height: 1;
+  }
+
+  .lg\:text-6xl {
+    font-size: 3.75rem;
     line-height: 1;
   }
 }
