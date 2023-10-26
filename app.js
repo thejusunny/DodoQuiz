@@ -115,7 +115,7 @@ function loadSplashScreen()
       };
     const animation1 = lottie.loadAnimation(animationConfig1);
     const animation2 = lottie.loadAnimation(animationConfig2);
-    //cacheUserDataFromApp({email:'Athul@example.com', userName:'Athul'});
+    //cacheUserDataFromApp({email:'Thomas@example.com', userName:'Thomas K'});
     cacheUserDataFromApp(getLocalUserData());
     getQuizInformation();
  }
@@ -148,8 +148,10 @@ async function getQuizInformation()
       quizData = new QuizData(data.quiz);
       noOfQuiz = quizData.getQuizCount();
       console.log(quizData.quizName + " count:"+ noOfQuiz);
-      fetchCurrentUserData();
-      fetchAndsortAllQuizUsers();
+      checkForUser();
+      currentUser.email = cachedUserData?.email;
+      currentUser.userName = cachedUserData?.userName;
+      //fetchAndsortAllQuizUsers();
       //createQuizPages();
 
     });
@@ -176,6 +178,9 @@ function showUserSummary()
 {
     overlayElement.style.display = "none";  
     noOfQuiz=0;
+    sorterView.rem
+    //sorterView.splice(1,4);
+    console.log(sorterView);
     leaderBoardUsers = new LeaderBoardUsers(sorterView,currentUser.rank,quizData);
     scrollToPage(1);
     updateSummaryUI();
@@ -188,8 +193,96 @@ function showUserSummary()
 
   //setUserDetails({email:'Athul@example.com', userName:'Athul'});
   //setUserDetails(null);
-  
+  const getUserEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/getUser";
+  const getQuizUserEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/getQuizUser";
+  const deleteUserEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/deleteUser";
   const createUserEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/createUser";
+  const upsertStatsEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/upsertQuizStats";
+  async function checkForUser()
+  {
+    const localUser = getLocalUserData();
+    //Local user signed in again, or without loggin in
+    if(cachedUserData.email == localUser.email)
+    {
+      await createUser(cachedUserData);
+      console.log("Created a local user");
+      fetchAndsortAllQuizUsers();
+      return;
+    }
+    //Check if the new email user exist
+    const endPoint = `${getUserEndPoint}?email=${cachedUserData.email}`;
+    fetch(endPoint,{
+      method: 'GET',
+      mode:'cors',
+    }).then(response=>{
+      if(!response.ok)
+      throw new Error("Response"+ response.statusText);
+      return response.json();
+    }).then(data=>{
+      const user = data.user;
+      //If the user doesn't exist check if does a guest user account exist 
+      if(!user)
+      {
+        const localUserEndPoint = `${getUserEndPoint}?email=${localUser.email}`;
+        fetch(localUserEndPoint,{
+          method: 'GET',
+          mode:'cors',
+          headers :{
+            'Content-Type':'Application/json'
+          } 
+    
+        }).then(response=>{
+          if(!response.ok)
+          throw new error("Response"+ response.statusText);
+          return response.json();
+        }).then(async data=>{
+          const localUser = data.user;
+          //if local user exist then update local user.email and userName to the new username and push that to server and delete local user
+          if(localUser)
+          {
+            const oldEmail = localUser.email;
+            localUser.email = cachedUserData.email;
+            localUser.userName = cachedUserData.userName;
+            deleteUser(oldEmail);
+            await createUser(localUser);
+            fetchAndsortAllQuizUsers();
+          }
+          else
+          {
+            await createUser(cachedUserData); // First time logged in user
+            fetchAndsortAllQuizUsers();
+          }
+
+        })
+        //createUser(data);
+      }
+      else //User exists, don't do anything for now
+      {
+        console.log("Found");
+        fetchAndsortAllQuizUsers();
+      }
+    });
+  }
+  function deleteUser(email)
+  {
+    fetch(deleteUserEndPoint,{
+      method:'DELETE',
+      mode:'cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "email": email,
+      })
+
+    }).then(response=>{
+      if(!response.ok)
+      throw new Error('Network response was not ok');
+      return response.json();
+    }).then(data=>{
+      console.log(data);
+    })
+  }
   async function fetchCurrentUserData()
   {
     
@@ -232,11 +325,10 @@ function showUserSummary()
 
 
   async function createUser(data) {
-    // Your asynchronous code here
     if(data!= null && data.email!=null)
     {
       try{
-        fetch(createUserEndPoint,{
+        const response = await fetch(createUserEndPoint,{
           method:'POST',
           mode:'cors',
           headers: {
@@ -245,15 +337,16 @@ function showUserSummary()
           body: JSON.stringify({
             "email": data.email,
             "userName": data.userName,
+            "quizStats": data.quizStats || null,
+            "pollStats": data.pollStats || null,
           })
     
-        }).then(response=>{
-          if(!response.ok)
+        });
+        
+        if(!response.ok)
           throw new Error('Network response was not ok');
-          return response.json();
-        }).then(data=>{
-          console.log(data);
-        })
+        const responseData = await response.json();
+        console.log(responseData);
       } 
       catch(err)
       {
@@ -344,11 +437,6 @@ const startPrompts =[
     "Start!",
 ]
 var userDataRecieved = false;
-
-// async function populateLeaderBoards ()
-// {
-//   updateSummaryUI();
-// }
 
 
 
@@ -533,7 +621,7 @@ function sendUserStatsToServer()
       }
        
     }
-  const upsertStatsEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/upsertQuizStats";
+ 
   try
   {
     fetch(upsertStatsEndPoint, {
@@ -553,6 +641,7 @@ function sendUserStatsToServer()
   }
  
 }
+
  
 function updateSummaryUI()
 {
@@ -563,7 +652,6 @@ function updateSummaryUI()
     const correctText = getElementsFromCurrentPage('correctstats-txt');
     const wrongText = getElementsFromCurrentPage('wrongstats-txt');
 
-    const points2Text = getElementsFromCurrentPage('points2-txt');
     
     timeText.textContent = playerScore.time;
     coinText.textContent = playerScore.coins;
@@ -572,10 +660,11 @@ function updateSummaryUI()
     wrongText.textContent = playerScore.wrong;
 
     const sortedView = leaderBoardUsers.getSortedView();
-    points2Text.textContent = playerScore.points;
+    const userRank = leaderBoardUsers.getUserRank();
     const userTexts = new Array();
     const rankTexts = new Array();
     const pointTexts = new Array();
+    const profileImages = new Array();
     userTexts.push ( getElementsFromCurrentPage('user1-txt'));
     userTexts.push ( getElementsFromCurrentPage('user2-txt'));
     userTexts.push ( getElementsFromCurrentPage('user3-txt'));
@@ -587,6 +676,36 @@ function updateSummaryUI()
     rankTexts.push ( getElementsFromCurrentPage('rank1-txt'));
     rankTexts.push ( getElementsFromCurrentPage('rank2-txt'));
     rankTexts.push ( getElementsFromCurrentPage('rank3-txt'));
+
+    profileImages.push ( getElementsFromCurrentPage('pp1-img'));
+    profileImages.push ( getElementsFromCurrentPage('pp2-img'));
+    profileImages.push ( getElementsFromCurrentPage('pp3-img'));
+    let imageToHighlight = null;
+    let textToHightlight = null;
+    let rankToHighLight = null;
+    let pointsToHighlight = null;
+    console.log(userRank);
+    if(userRank<=1)
+    {
+      imageToHighlight = profileImages[0];
+      textToHightlight = userTexts[0];
+      rankToHighLight = rankTexts[0];
+      pointsToHighlight = pointTexts[0];
+    }
+    else
+    {
+      imageToHighlight =  profileImages[1];
+      textToHightlight = userTexts[1];
+      rankToHighLight = rankTexts[1];
+      pointsToHighlight = pointTexts[1];
+    }
+    imageToHighlight.style.borderWidth = '2px';
+    imageToHighlight.style.borderColor  = 'royalBlue';
+    imageToHighlight.style.borderStyle  = 'round';
+    imageToHighlight.style.borderRadius  = '100px';
+    textToHightlight.style.color = 'royalBlue';
+    rankToHighLight.style.color = 'royalBlue';
+    pointsToHighlight.style.color = 'royalBlue';
 
     for (let index = 0; index < userTexts.length; index++) {
       const userName = userTexts[index];

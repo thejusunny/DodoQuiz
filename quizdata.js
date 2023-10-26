@@ -77,7 +77,11 @@ export class QuizData {
       GetScore(noOfQuiz)
       {
        
-        const score = 100+ (25* this.correct*noOfQuiz);
+        const miniumScore = 100;
+        const scorePerQuestion = 100;
+        const averageResponseTime = 1;
+        const score = miniumScore + (scorePerQuestion* this.correct) + (50 * Math.max (0,averageResponseTime/this.averageTime()));
+        // const score = 100+ (25* this.correct*noOfQuiz);
         return isNaN(score)?0:score.toFixed(0);
     }
 }
@@ -100,6 +104,7 @@ export class LeaderBoardUsers
         this.sortedView = new Array();
         this.quizData = quizData;
         this.userRank = userIndex +1;
+        this.userName = sortedUsers[userIndex].userName;
         if(sortedUsers.length>=3)
         {
             if(userIndex===0)
@@ -151,20 +156,25 @@ export class LeaderBoardUsers
             const dummyCount = 3 - sortedUsers.length;
             const dummyPlayers = this.getDummyPlayers(dummyCount);
             sortedUsers.forEach(user => {
-                this.sortedView.push({userName: user.userName, points: user.stats[0].points, rank:0})
+                this.sortedView.push({userName: user.userName, points: user.points, rank:0})
             });
             dummyPlayers.forEach(dummyPlayer => {
                 this.sortedView.push({userName: dummyPlayer.userName, points: dummyPlayer.points, rank:0 });
             });
             this.sortedView.sort((a,b)=>b.points- a.points);
             this.sortedView.forEach(user => {
-                user.rank = this.sortedView.findIndex(user)+1;
+                user.rank = this.sortedView.findIndex((e)=> e==user)+1;
             });
         }
         this.sortedView.forEach(user => {
             console.log(user.userName +":"+user.rank);
         });
-
+       
+        this.userRank =  this.sortedView.findIndex((element)=>element.userName == this.userName);
+    }
+    getUserRank()
+    {
+        return this.userRank+1;
     }
     getSortedView()
     {
@@ -192,7 +202,7 @@ export class LeaderBoardUsers
            
             const player = {
                 userName: playerNames[index],
-                points : maxScore * this.getRandomNumber(0.3,0.85),
+                points : (maxScore * this.getRandomNumber(0.3,0.85)).toFixed(0),
             }
             dummyPlayer.push(player);
         }
