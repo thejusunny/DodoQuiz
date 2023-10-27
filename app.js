@@ -106,13 +106,15 @@ audioPlayers.forEach(player => {
 function fakePlay()
 {
   audioPlayers.forEach(player => {
+    player.volume = 0;
     player.play();
   });
   setTimeout(()=>{
     audioPlayers.forEach(player => {
+      player.volume = 1;
       player.pause();
     });
-  },10);
+  },1000);
 }
 let audioEnabled = true;
 audioButton.addEventListener('click',()=>{
