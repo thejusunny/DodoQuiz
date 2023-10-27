@@ -130,7 +130,29 @@ export class LeaderBoardUsers
             }
             else
             {
-                console.log(userIndex);
+               if(userIndex == sortedUsers.length-1)
+               {
+                const user1 ={
+                    userName:sortedUsers[userIndex-2].userName,
+                    points: sortedUsers[userIndex-2].points,
+                    rank: this.userRank-2
+                };
+                const user2 ={
+                    userName:sortedUsers[userIndex-1].userName,
+                    points: sortedUsers[userIndex-1].points,
+                    rank: this.userRank-1
+                };
+                const user3 ={
+                    userName:sortedUsers[userIndex].userName,
+                    points: sortedUsers[userIndex].points,
+                    rank: this.userRank
+                };
+                this.sortedView.push (user1);
+                this.sortedView.push (user2);
+                this.sortedView.push (user3);
+               }
+               else
+               {
                 const user1 ={
                     userName:sortedUsers[userIndex-1].userName,
                     points: sortedUsers[userIndex-1].points,
@@ -149,6 +171,8 @@ export class LeaderBoardUsers
                 this.sortedView.push (user1);
                 this.sortedView.push (user2);
                 this.sortedView.push (user3);
+               }
+               
             }
         }
         else
