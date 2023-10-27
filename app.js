@@ -114,7 +114,7 @@ function fakePlay()
       player.volume = 1;
       player.pause();
     });
-  },100);
+  },10);
 }
 let audioEnabled = true;
 audioButton.addEventListener('click',()=>{
