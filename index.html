@@ -17,11 +17,26 @@
             <img src="assets/soundon.png" id="img-audio-quiz">
         </button>
     </div>
-    <audio  src="sounds/correct.ogg" muted id="correct-audio"></audio>
-    <audio  src="sounds/wrong.ogg" muted id="wrong-audio"></audio>
-    <audio  src="sounds/countdown2.ogg" muted id="countdown-audio"></audio>
-    <audio  src="sounds/go.ogg" muted id="go-audio"></audio>
-    <audio  src="sounds/timer.ogg" muted id="timer-audio"></audio>
+    <audio  id="correct-audio">
+        <source src="sounds/correct.ogg" type="audio/ogg">
+        <source src="sounds/correct.wav" type="audio/wav">
+    </audio>
+    <audio   id="wrong-audio">
+        <source src="sounds/wrong.ogg" type="audio/ogg">
+        <source src="sounds/wrong.wav" type="audio/wav">
+    </audio>
+    <audio   id="countdown-audio">
+        <source src="sounds/countdown2.ogg" type="audio/ogg">
+        <source src="sounds/countdown.wav" type="audio/wav">
+    </audio>
+    <audio    id="go-audio">
+        <source src="sounds/go.ogg" type="audio/ogg">
+        <source src="sounds/go.wav" type="audio/wav">
+    </audio>
+    <audio    id="timer-audio">
+        <source src="sounds/timer.ogg" type="audio/ogg">
+        <source src="sounds/timer.wav" type="audio/wav">
+    </audio>
     <div class="h-full w-full flex items-center z-30 absolute flex-col justify-center bg-yellow-50" id="div-splash-quiz">
         <label class="font-Monteserrat-black py-1 text-4xl sm:text-6xl md:text-8xl lg:text-8xl text-gray-600 "  >Dodo Quiz</label>
         <label class="font-Monteserrat-elight py-1 text-lg sm:text-xl md:text-3xl lg:text-5xl text-gray-600"  >Put your knowledge to test!</label>

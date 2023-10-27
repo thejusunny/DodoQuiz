@@ -114,7 +114,7 @@ function fakePlay()
       player.volume = 1;
       player.pause();
     });
-  },1000);
+  },100);
 }
 let audioEnabled = true;
 audioButton.addEventListener('click',()=>{
@@ -224,7 +224,6 @@ async function getQuizInformation()
 function startButtonClicked()
 {
 
-  correctAudioPlayer.play();
   if(startInstruction== StartInstruction.Quiz)
   {
     loadQuiz();
@@ -239,6 +238,7 @@ function startButtonClicked()
 
 function loadQuiz()
 {
+  fakePlay();
   createQuizPages();
   setTimeout(()=>{
     startCountDown();
