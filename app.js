@@ -79,12 +79,41 @@ const splashScreen = document.getElementById ("div-splash-quiz");
 const currentUser = new QuizUser();
 let cachedUserData = null;
 const overlayElement = document.getElementById("overlay");
+const wrongAudioPlayer = document.getElementById('wrong-audio');
+const correctAudioPlayer = document.getElementById('correct-audio');
+const countDownAudioPlayer = document.getElementById('countdown-audio');
+const timerAudioPlayer = document.getElementById('timer-audio');
+const goAudioPlayer = document.getElementById('go-audio');
+const audioButton = document.getElementById('btn-audiotoggle-quiz');
+const audioImage = document.getElementById('img-audio-quiz');
+const audioPlayers = new Array();
+audioPlayers.push(wrongAudioPlayer);
+audioPlayers.push(correctAudioPlayer);
+audioPlayers.push(countDownAudioPlayer);
+audioPlayers.push(goAudioPlayer);
+audioPlayers.push(timerAudioPlayer);
+audioPlayers.forEach(player => {
+  player.volume = 0.5;
+});
+let audioEnabled = true;
+audioButton.addEventListener('click',()=>{
+  audioEnabled = !audioEnabled;
+  const volume = audioEnabled?1:0;
+  audioPlayers.forEach(audioPlayer => {
+    audioPlayer.volume = volume;
+  });
+  audioImage.src = audioEnabled? "./assets/soundon.png": "./assets/soundoff.png";
+});
+
 let leaderBoardUsers ;
 const playerScore = new PlayerScore(); 
  //*******Call this function from flutter webview widget********
 function cacheUserDataFromApp(data)
 {
-  cachedUserData = data;
+  const parsedData = data;
+  //const parsedData = JSON.parse(data);
+  cachedUserData = parsedData;
+  getQuizInformation();
 }
 function getLocalUserData()
 {
@@ -115,9 +144,9 @@ function loadSplashScreen()
       };
     const animation1 = lottie.loadAnimation(animationConfig1);
     const animation2 = lottie.loadAnimation(animationConfig2);
+    /* Start the application after user data is cached locally or from flutter app */
     //cacheUserDataFromApp({email:'Thomas@example.com', userName:'Thomas K'});
     cacheUserDataFromApp(getLocalUserData());
-    getQuizInformation();
  }
 async function getQuizInformation()
 {
@@ -462,15 +491,23 @@ function startCountDown()
   let count = 0;
   let promptInterval = setInterval(()=>{
 
+ 
   promptText.textContent = startPrompts[count];
   const fontScaleAnimation = new Animation(promptText);
   const fontOpacityAnimation = new Animation(promptText);
     if (count >= startPrompts.length - 1) {
+      if(count=== startPrompts.length-1)
+        goAudioPlayer.play();
       fontScaleAnimation.animateFontSize(0.2, { start: 300, end: 500 });
       setTimeout(() => {
         fontOpacityAnimation.animateOpacity(0.5, { start: 1, end: 0 });
       }, 1000);
-    } else fontScaleAnimation.animateFontSize(0.5, { start: 600, end: 300 });
+    } else 
+    {
+      countDownAudioPlayer.play();
+      fontScaleAnimation.animateFontSize(0.5, { start: 600, end: 300 });
+    }
+
     
     fontOpacityAnimation.animateOpacity(0.25, {start:0, end:1});
     if(count>=startPrompts.length)
@@ -478,6 +515,7 @@ function startCountDown()
        
         clearInterval(promptInterval);
         startQuiz();
+        
         return;
     }
     count++;
@@ -518,7 +556,8 @@ function setupQuiz() {
   btn4.addEventListener("click", () => {
     OptionSelected(4, btn4);
   });
-
+  timerAudioPlayer.playbackRate = 1;
+  timerAudioPlayer.play();
   meterFillAnimation = new Animation(meterFillImg);
   meterFillAnimation.animateHeight(quizDuration, { start: 100, end: 0.01 }, () => {
     meterFillAnimation.pause();
@@ -543,6 +582,12 @@ function startNextQuiz() {
     sorterView.sort((a,b)=> b.points - a.points);
     const index = sorterView.findIndex((user)=> user== newUser);
     leaderBoardUsers = new LeaderBoardUsers(sorterView,index, quizData);
+    const postScore =
+    {
+      coins: playerScore.coins,
+      xp: playerScore.xp
+    }
+    //window.webviewDataChannel.postMessage(JSON.stringify({coins: playerScore.coins, xp: playerScore.xp}));
     updateSummaryUI();
     sendUserStatsToServer();
     return;
@@ -552,12 +597,14 @@ function startNextQuiz() {
 }
 function timerRanOut() {
   startNextQuiz();
+  timerAudioPlayer.pause();
 }
 function OptionSelected(index, button) {
   meterFillAnimation?.pause();
   clockAnimation?.pause();
   clearTimeout(colorChangeTimeout);
   console.log("Selected" + index);
+  timerAudioPlayer.pause();
   const scaleAnimation = new Animation(button);
 //   button.style.width = 47.5 + "%";
 //   button.style.height = 38 + "%";
@@ -573,6 +620,7 @@ function OptionSelected(index, button) {
     playerScore.addCoin(quizElement.rewards[0]);
     playerScore.addXp(quizElement.rewards[1]);
     playerScore.addTime( meterFillAnimation.progress* quizDuration);
+    correctAudioPlayer.play();
   } 
   else 
   {
@@ -598,6 +646,7 @@ function OptionSelected(index, button) {
       }
     );
     disableOptions();
+    wrongAudioPlayer.play();
   }
 }
 function disableOptions() {
