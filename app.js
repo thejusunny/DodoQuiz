@@ -111,7 +111,7 @@ function fakePlay()
   });
   setTimeout(()=>{
     audioPlayers.forEach(player => {
-      player.volume = 1;
+      player.volume = 0.4;
       player.pause();
     });
   },10);
