@@ -13,15 +13,15 @@
 </head>
 <body class="h-screen w-screen bg-yellow-50 ">
     <div class="absolute z-40 w-full h-24  flex justify-end">
-        <button class="absolute w-12 sm:w-14 md:w-20 lg:w-24 h-auto pt-4 pr-3" id="btn-audiotoggle-quiz">
+        <button class="absolute w-14 sm:w-14 md:w-20 lg:w-24 h-auto pt-4 pr-5" id="btn-audiotoggle-quiz">
             <img src="assets/soundon.png" id="img-audio-quiz">
         </button>
     </div>
-    <audio  src="sounds/correct.ogg" id="correct-audio"></audio>
-    <audio  src="sounds/wrong.ogg" id="wrong-audio"></audio>
-    <audio  src="sounds/countdown2.ogg" id="countdown-audio"></audio>
-    <audio  src="sounds/go.ogg" id="go-audio"></audio>
-    <audio  src="sounds/timer.ogg" id="timer-audio"></audio>
+    <audio  src="sounds/correct.ogg" muted id="correct-audio"></audio>
+    <audio  src="sounds/wrong.ogg" muted id="wrong-audio"></audio>
+    <audio  src="sounds/countdown2.ogg" muted id="countdown-audio"></audio>
+    <audio  src="sounds/go.ogg" muted id="go-audio"></audio>
+    <audio  src="sounds/timer.ogg" muted id="timer-audio"></audio>
     <div class="h-full w-full flex items-center z-30 absolute flex-col justify-center bg-yellow-50" id="div-splash-quiz">
         <label class="font-Monteserrat-black py-1 text-4xl sm:text-6xl md:text-8xl lg:text-8xl text-gray-600 "  >Dodo Quiz</label>
         <label class="font-Monteserrat-elight py-1 text-lg sm:text-xl md:text-3xl lg:text-5xl text-gray-600"  >Put your knowledge to test!</label>

@@ -94,6 +94,7 @@ audioPlayers.push(goAudioPlayer);
 audioPlayers.push(timerAudioPlayer);
 audioPlayers.forEach(player => {
   player.volume = 0.5;
+  player.muted = false;
 });
 let audioEnabled = true;
 audioButton.addEventListener('click',()=>{
