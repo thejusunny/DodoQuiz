@@ -223,7 +223,8 @@ async function getQuizInformation()
 
 function startButtonClicked()
 {
-  fakePlay();
+
+  correctAudioPlayer.play();
   if(startInstruction== StartInstruction.Quiz)
   {
     loadQuiz();
