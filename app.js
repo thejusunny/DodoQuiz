@@ -102,6 +102,18 @@ audioPlayers.forEach(player => {
   player.volume = 0.5;
   player.muted = false;
 });
+
+function fakePlay()
+{
+  audioPlayers.forEach(player => {
+    player.play();
+  });
+  setTimeout(()=>{
+    audioPlayers.forEach(player => {
+      player.pause();
+    });
+  },10);
+}
 let audioEnabled = true;
 audioButton.addEventListener('click',()=>{
   audioEnabled = !audioEnabled;
@@ -224,7 +236,10 @@ function startButtonClicked()
 function loadQuiz()
 {
   createQuizPages();
-  startCountDown();
+  fakePlay();
+  setTimeout(()=>{
+    startCountDown();
+  },20)
 }
 function showExistingUserSummary()
 {
