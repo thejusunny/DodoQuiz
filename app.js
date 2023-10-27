@@ -223,6 +223,7 @@ async function getQuizInformation()
 
 function startButtonClicked()
 {
+  fakePlay();
   if(startInstruction== StartInstruction.Quiz)
   {
     loadQuiz();
@@ -238,7 +239,6 @@ function startButtonClicked()
 function loadQuiz()
 {
   createQuizPages();
-  fakePlay();
   setTimeout(()=>{
     startCountDown();
   },20)
