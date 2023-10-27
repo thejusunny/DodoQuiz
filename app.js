@@ -72,12 +72,15 @@ const mockQuizData = {
   
 };
 let quizData = new QuizData(mockQuizData);
+let startInstruction = 'None';
 let url = "https://thejusunny.github.io/DodoQuiz/";
 const splashScreenDuration = 4;
 let splashStartTime;
 const splashScreen = document.getElementById ("div-splash-quiz");
 const currentUser = new QuizUser();
 let cachedUserData = null;
+const loadingDiv = document.getElementById("div-loading-quiz");
+const startDiv = document.getElementById("div-start-quiz");
 const overlayElement = document.getElementById("overlay");
 const wrongAudioPlayer = document.getElementById('wrong-audio');
 const correctAudioPlayer = document.getElementById('correct-audio');
@@ -86,6 +89,9 @@ const timerAudioPlayer = document.getElementById('timer-audio');
 const goAudioPlayer = document.getElementById('go-audio');
 const audioButton = document.getElementById('btn-audiotoggle-quiz');
 const audioImage = document.getElementById('img-audio-quiz');
+const startButton = document.getElementById('btn-start-quiz');
+startButton.addEventListener('click', startButtonClicked);
+
 const audioPlayers = new Array();
 audioPlayers.push(wrongAudioPlayer);
 audioPlayers.push(correctAudioPlayer);
@@ -181,30 +187,46 @@ async function getQuizInformation()
       checkForUser();
       currentUser.email = cachedUserData?.email;
       currentUser.userName = cachedUserData?.userName;
-      //fetchAndsortAllQuizUsers();
-      //createQuizPages();
+     
 
     });
 }
-let splashTimeElapsed = false;
-let mainDataLoaded  = false;
-const splashInterval = setInterval(()=>{
-  const delta = performance.now()-splashStartTime;
-  if(delta>splashScreenDuration && mainDataLoaded)
+
+/*auto loading splash screen*/
+// let splashTimeElapsed = false;
+// let mainDataLoaded  = false;
+// const splashInterval = setInterval(()=>{
+//   const delta = performance.now()-splashStartTime;
+//   if(delta>splashScreenDuration && mainDataLoaded)
+//   {
+//       splashTimeElapsed = true;
+//       splashScreen.style.display ='none';
+//       clearInterval(splashInterval);
+//       //createQuizPages();
+//   }
+// }, 200);
+
+
+function startButtonClicked()
+{
+  if(startInstruction== StartInstruction.Quiz)
   {
-      splashTimeElapsed = true;
-      splashScreen.style.display ='none';
-      clearInterval(splashInterval);
-      //createQuizPages();
+    loadQuiz();
+    
   }
-}, 200);
+  else
+  {
+    showExistingUserSummary();
+  }
+  splashScreen.style.display ='none';
+}
 
 function loadQuiz()
 {
   createQuizPages();
   startCountDown();
 }
-function showUserSummary()
+function showExistingUserSummary()
 {
     overlayElement.style.display = "none";  
     noOfQuiz=0;
@@ -313,18 +335,19 @@ function showUserSummary()
       console.log(data);
     })
   }
-  async function fetchCurrentUserData()
+  const StartInstruction =
   {
-    
-    if(cachedUserData.email.includes('guest'))
-    {
-      cachedUserData = getLocalUserData();
-    }
-    createUser(cachedUserData);
-     // either create a user or dont create if duplicate exist
-    currentUser.email = cachedUserData?.email;
-    currentUser.userName = cachedUserData?.userName;
+    Quiz:'Quiz',
+    Summary:'Summary'
+  }
 
+
+
+  function showStartButton(instruction)
+  {
+    loadingDiv.style.display ='none';
+    startDiv.style.display = 'flex';
+    startInstruction = instruction;
   }
   function checkForUserPresenceInQuiz()
   {
@@ -334,7 +357,8 @@ function showUserSummary()
     if(index<0)
       {
         console.log("No user found in the same quiz");
-        loadQuiz();
+        //loadQuiz();
+        showStartButton(StartInstruction.Quiz);
       }
       else
       {
@@ -347,13 +371,11 @@ function showUserSummary()
         playerScore.coins = user.quizStats[0].stats.coins;
         playerScore.time = user.quizStats[0].stats.time;
         playerScore.xp = user.quizStats[0].stats.xp;
-        showUserSummary();
+        showStartButton(StartInstruction.Summary);
+        //showUserSummary();
       }
-      mainDataLoaded = true;
+      //mainDataLoaded = true;
   }
-
-
-
   async function createUser(data) {
     if(data!= null && data.email!=null)
     {
@@ -466,7 +488,6 @@ const startPrompts =[
     "1",
     "Start!",
 ]
-var userDataRecieved = false;
 
 
 

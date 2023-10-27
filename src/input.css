@@ -17,3 +17,19 @@
     font-family:'Montserrat-elight';
     src: url("../fonts/montserrat/Montserrat-ExtraLight.ttf") format('truetype');
 }
+@keyframes scaleUpDown {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.15);
+    }
+  }
+
+.scaling-button {
+    @apply inline-block  text-white rounded-md transition-transform animate-scaleUpDown;
+  }
+
+.animate-scaleUpDown {
+    animation: scaleUpDown 1.5s infinite;
+  }

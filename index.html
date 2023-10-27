@@ -28,10 +28,19 @@
         <div class="w-auto h-[50%]" id="div-lottiebig-quiz">
            
         </div>
-        <div class = "flex justify-center  items-center relative h-1/6">
-            <div class="w-auto h-[50%]" id="div-lottieloader-quiz">   
+        <div class = "relative h-1/6 w-full">
+            <div class="relative w-full h-full flex justify-center items-center " id="div-loading-quiz">
+                <div class="w-auto h-[100%]" id="div-lottieloader-quiz">   
+                </div>
+                <label class="font-Monteserrat  text-xl sm:text-3xl md:text-4xl lg:text-7xl text-gray-400 pb-10 absolute top-2  "  >Loading</label>
             </div>
-            <label class="font-Monteserrat  text-xl sm:text-3xl md:text-4xl lg:text-7xl text-gray-400 absolute bottom-5 "  >Loading</label>
+            <div class="hidden flex-col items-center justify-center w-full h-full" id="div-start-quiz">
+                <button class=" w-20 sm:w-14 md:w-20 lg:w-24 h-auto scaling-button" id="btn-start-quiz">
+                    <img src="assets/playbutton.png" id="img-audio-quiz">
+                </button>
+                <label class="font-Monteserrat text-xl sm:text-3xl md:text-4xl lg:text-7xl text-gray-400">click to start</label>
+            </div>
+           
         </div>
         <div class="flex flex-row h-1/6 w-full justify-center items-center">
 
