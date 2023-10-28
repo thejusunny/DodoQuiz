@@ -166,7 +166,7 @@ function loadSplashScreen()
     const animation1 = lottie.loadAnimation(animationConfig1);
     const animation2 = lottie.loadAnimation(animationConfig2);
     /* Start the application after user data is cached locally or from flutter app */
-    //cacheUserDataFromApp({email:'Thomas@example.com', userName:'Thomas K'});
+    //cacheUserDataFromApp({email:'Albin@example.com', userName:'Albin J'});
     cacheUserDataFromApp(getLocalUserData());
  }
 async function getQuizInformation()
@@ -248,10 +248,10 @@ function showExistingUserSummary()
 {
     overlayElement.style.display = "none";  
     noOfQuiz=0;
-    sorterView.rem
+    sortedView.rem
     //sorterView.splice(1,4);
-    console.log(sorterView);
-    leaderBoardUsers = new LeaderBoardUsers(sorterView,currentUser.rank,quizData);
+    console.log(sortedView);
+    leaderBoardUsers = new LeaderBoardUsers(sortedView,currentUser.rank,quizData);
     scrollToPage(1);
     updateSummaryUI();
 }
@@ -427,7 +427,7 @@ function showExistingUserSummary()
   }
   const getAllQuizUsersEndPoint = "https://zgmb05jg6e.execute-api.ap-southeast-1.amazonaws.com/getQuizUsers";
   let sortedUsers = new Array();
-  let sorterView = new Array();
+  let sortedView = new Array();
   async function fetchAndsortAllQuizUsers()
   {
     const endPoint = `${getAllQuizUsersEndPoint}?quizName=${quizData.quizName}`;
@@ -452,7 +452,7 @@ function showExistingUserSummary()
             userName:sortedUser.userName,
             points: sortedUser.quizStats[0].stats.points,
           }
-          sorterView.push(user);
+          sortedView.push(user);
           console.log(user);
         });
         checkForUserPresenceInQuiz();
@@ -618,10 +618,10 @@ function startNextQuiz() {
     scrollToNext();
     playerScore.finalizeScore(quizData.getQuizCount());
     const newUser= {userName:currentUser.userName, points:playerScore.points};
-    sorterView.push(newUser);
-    sorterView.sort((a,b)=> b.points - a.points);
-    const index = sorterView.findIndex((user)=> user== newUser);
-    leaderBoardUsers = new LeaderBoardUsers(sorterView,index, quizData);
+    sortedView.push(newUser);
+    sortedView.sort((a,b)=> b.points - a.points);
+    const index = sortedView.findIndex((user)=> user== newUser);
+    leaderBoardUsers = new LeaderBoardUsers(sortedView,index, quizData);
     const postScore =
     {
       coins: playerScore.coins,
@@ -748,7 +748,7 @@ function updateSummaryUI()
     correctText.textContent = playerScore.correct;
     wrongText.textContent = playerScore.wrong;
 
-    const sortedView = leaderBoardUsers.getSortedView();
+    const normalizedSortedView = leaderBoardUsers.getNormalizedSortedView(); //1-3
     const userRank = leaderBoardUsers.getUserRank();
     const userTexts = new Array();
     const rankTexts = new Array();
@@ -781,12 +781,19 @@ function updateSummaryUI()
       rankToHighLight = rankTexts[0];
       pointsToHighlight = pointTexts[0];
     }
-    else
+    else if(userRank<sortedView.length)
     {
       imageToHighlight =  profileImages[1];
       textToHightlight = userTexts[1];
       rankToHighLight = rankTexts[1];
       pointsToHighlight = pointTexts[1];
+    }
+    else
+    {
+      imageToHighlight =  profileImages[2];
+      textToHightlight = userTexts[2];
+      rankToHighLight = rankTexts[2];
+      pointsToHighlight = pointTexts[2];
     }
     imageToHighlight.style.borderWidth = '2px';
     imageToHighlight.style.borderColor  = 'royalBlue';
@@ -798,9 +805,9 @@ function updateSummaryUI()
 
     for (let index = 0; index < userTexts.length; index++) {
       const userName = userTexts[index];
-      userName.textContent = sortedView[index].userName;
-      pointTexts[index].textContent = sortedView[index].points;
-      rankTexts[index].textContent = sortedView[index].rank;
+      userName.textContent = normalizedSortedView[index].userName;
+      pointTexts[index].textContent = normalizedSortedView[index].points;
+      rankTexts[index].textContent = normalizedSortedView[index].rank;
     } 
         
 

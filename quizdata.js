@@ -194,15 +194,19 @@ export class LeaderBoardUsers
             console.log(user.userName +":"+user.rank);
         });
        
-        this.userRank =  this.sortedView.findIndex((element)=>element.userName == this.userName);
+        this.normalizedRank =  this.sortedView.findIndex((element)=>element.userName == this.userName);
+    }
+    getNormalizedUserRank()
+    {
+        return this.normalizedRank+1;
+    }
+    getNormalizedSortedView()
+    {
+        return this.sortedView;
     }
     getUserRank()
     {
         return this.userRank+1;
-    }
-    getSortedView()
-    {
-        return this.sortedView;
     }
     getDummyPlayers(count)
     {
