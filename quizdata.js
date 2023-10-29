@@ -3,6 +3,7 @@ export class QuizData {
       this.mainData = quizData.data;
       this.quizItems = new Array();
       this.quizName = quizData.name;
+      this.duration = quizData.duration;
       for (let index = 0; index < this.mainData.questions.length; index++) {
         const quiz = {
           question: this.mainData.questions[index],
@@ -84,16 +85,6 @@ export class QuizData {
         // const score = 100+ (25* this.correct*noOfQuiz);
         return isNaN(score)?0:score.toFixed(0);
     }
-}
-class User
-{
-    constructor(userName, point, rank)
-    {
-        this.userName=userName;
-        this.points=point;
-        this.rank = rank;
-    }
-
 }
 export class LeaderBoardUsers
 {
@@ -189,6 +180,7 @@ export class LeaderBoardUsers
             this.sortedView.forEach(user => {
                 user.rank = this.sortedView.findIndex((e)=> e==user)+1;
             });
+           
         }
         this.sortedView.forEach(user => {
             console.log(user.userName +":"+user.rank);
@@ -198,7 +190,7 @@ export class LeaderBoardUsers
     }
     getNormalizedUserRank()
     {
-        return this.normalizedRank+1;
+        return (this.normalizedRank+1);
     }
     getNormalizedSortedView()
     {

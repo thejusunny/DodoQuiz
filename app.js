@@ -521,7 +521,7 @@ let noOfQuiz = 4;
 
 let clockAnimation;
 var meterFillAnimation = null;
-const quizDuration = 5;
+let quizDuration = 5;
 
 //entryPoint();// app starts here 
 function startCountDown()
@@ -572,6 +572,7 @@ function startCountDown()
 function startQuiz() 
 {
   overlayElement.style.display = "none";
+  quizDuration = quizData.duration;
   setupQuiz();
 }
 let colorChangeTimeout = null;
@@ -748,8 +749,8 @@ function updateSummaryUI()
     correctText.textContent = playerScore.correct;
     wrongText.textContent = playerScore.wrong;
 
-    const normalizedSortedView = leaderBoardUsers.getNormalizedSortedView(); //1-3
-    const userRank = leaderBoardUsers.getUserRank();
+    const normalizedSortedView = leaderBoardUsers.getNormalizedSortedView();
+    const userRank = leaderBoardUsers.getNormalizedUserRank(); //1-3
     const userTexts = new Array();
     const rankTexts = new Array();
     const pointTexts = new Array();
@@ -773,7 +774,6 @@ function updateSummaryUI()
     let textToHightlight = null;
     let rankToHighLight = null;
     let pointsToHighlight = null;
-    console.log(userRank);
     if(userRank<=1)
     {
       imageToHighlight = profileImages[0];
@@ -781,7 +781,7 @@ function updateSummaryUI()
       rankToHighLight = rankTexts[0];
       pointsToHighlight = pointTexts[0];
     }
-    else if(userRank<sortedView.length)
+    else if(userRank<=2)
     {
       imageToHighlight =  profileImages[1];
       textToHightlight = userTexts[1];
