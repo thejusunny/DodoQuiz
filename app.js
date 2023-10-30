@@ -597,8 +597,11 @@ function setupQuiz() {
   btn4.addEventListener("click", () => {
     OptionSelected(4, btn4);
   });
-  timerAudioPlayer.playbackRate = 1;
-  timerAudioPlayer.play();
+  //A slight time out so pause doesn;t stop play
+  setTimeout(()=>{
+    timerAudioPlayer.playbackRate = 1;
+    timerAudioPlayer.play();
+  },300);
   meterFillAnimation = new Animation(meterFillImg);
   meterFillAnimation.animateHeight(quizDuration, { start: 100, end: 0.01 }, () => {
     meterFillAnimation.pause();
@@ -612,7 +615,7 @@ function setupQuiz() {
         setTimeout(()=>{
           clockAnimation.pause();
         },3000);
-    }, (quizDuration*1000)*0.7);    
+    }, (quizDuration*1000)*0.6);    
 }
 function startNextQuiz() {
   if (currentPage >= noOfQuiz - 1) {
