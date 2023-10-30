@@ -103,6 +103,20 @@ audioPlayers.forEach(player => {
   player.muted = false;
 });
 
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden)
+  {
+    audioPlayers.forEach(player => {
+      player.muted = true;
+    });
+  }
+  else
+  {
+    audioPlayers.forEach(player => {
+      player.muted = false;
+    });
+  }
+});
 function fakePlay()
 {
   audioPlayers.forEach(player => {
@@ -735,7 +749,7 @@ function sendUserStatsToServer()
  
 }
 
- 
+
 function updateSummaryUI()
 {
     const timeText = getElementsFromCurrentPage('timestats-txt');
