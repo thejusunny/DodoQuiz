@@ -262,10 +262,18 @@ function showExistingUserSummary()
 {
     overlayElement.style.display = "none";  
     noOfQuiz=0;
-    sortedView.rem
     //sorterView.splice(1,4);
     console.log(sortedView);
-    leaderBoardUsers = new LeaderBoardUsers(sortedView,currentUser.rank,quizData);
+    leaderBoardUsers = new LeaderBoardUsers(quizData);
+    if(sortedView.length<3)
+    {
+      const dummyPlayers = leaderBoardUsers.getDummyPlayers(3-sortedView.length);
+      dummyPlayers.forEach(dummy => {
+        sortedView.push({userName:dummy.userName, points: dummy.points});
+      });
+      sortedView.sort((a,b)=> b.points - a.points);
+    }
+    createLeaderBoardUI();
     scrollToPage(1);
     updateSummaryUI();
 }
@@ -288,8 +296,24 @@ function showExistingUserSummary()
     //Local user signed in again, or without loggin in
     if(cachedUserData.email == localUser.email)
     {
-      await createUser(cachedUserData);
-      console.log("Created a local user");
+      const endPoint = `${getUserEndPoint}?email=${cachedUserData.email}`;
+      fetch(endPoint,{
+        method: 'GET',
+        mode:'cors',
+      }).then(response=>{
+        if(!response.ok)
+        throw new Error("Response"+ response.statusText);
+        return response.json();
+      }).then(data=>{
+        const user = data.user;
+        if(!user)
+        {
+          createUser(cachedUserData);
+          console.log("Created a local user");
+        }
+          
+      });
+      
       fetchAndsortAllQuizUsers();
       return;
     }
@@ -464,6 +488,7 @@ function showExistingUserSummary()
         sortedUsers.forEach(sortedUser => {
           const  user = {
             userName:sortedUser.userName,
+            email: sortedUser.email,
             points: sortedUser.quizStats[0].stats.points,
           }
           sortedView.push(user);
@@ -639,12 +664,21 @@ function startNextQuiz() {
     sortedView.push(newUser);
     sortedView.sort((a,b)=> b.points - a.points);
     const index = sortedView.findIndex((user)=> user== newUser);
-    leaderBoardUsers = new LeaderBoardUsers(sortedView,index, quizData);
+    leaderBoardUsers = new LeaderBoardUsers(quizData);
+    if(sortedView.length<3)
+    {
+      const dummyPlayers = leaderBoardUsers.getDummyPlayers(3-sortedView.length);
+      dummyPlayers.forEach(dummy => {
+        sortedView.push({userName:dummy.userName, points: dummy.points});
+      });
+      sortedView.sort((a,b)=> b.points - a.points);
+    }
     const postScore =
     {
       coins: playerScore.coins,
       xp: playerScore.xp
     }
+    createLeaderBoardUI();
     //window.webviewDataChannel.postMessage(JSON.stringify({coins: playerScore.coins, xp: playerScore.xp}));
     updateSummaryUI();
     sendUserStatsToServer();
@@ -760,7 +794,7 @@ function updateSummaryUI()
     const wrongText = getElementsFromCurrentPage('wrongstats-txt');
 
     
-    timeText.textContent = playerScore.time;
+    timeText.textContent = playerScore.time +" sec";
     coinText.textContent = playerScore.coins;
     xpText.textContent = playerScore.xp;
     correctText.textContent = playerScore.correct;
@@ -812,22 +846,107 @@ function updateSummaryUI()
       rankToHighLight = rankTexts[2];
       pointsToHighlight = pointTexts[2];
     }
-    imageToHighlight.style.borderWidth = '2px';
-    imageToHighlight.style.borderColor  = 'royalBlue';
-    imageToHighlight.style.borderStyle  = 'round';
-    imageToHighlight.style.borderRadius  = '100px';
-    textToHightlight.style.color = 'royalBlue';
-    rankToHighLight.style.color = 'royalBlue';
-    pointsToHighlight.style.color = 'royalBlue';
+    // imageToHighlight.style.borderWidth = '2px';
+    // imageToHighlight.style.borderColor  = 'royalBlue';
+    // imageToHighlight.style.borderStyle  = 'round';
+    // imageToHighlight.style.borderRadius  = '100px';
+    // textToHightlight.style.color = 'royalBlue';
+    // rankToHighLight.style.color = 'royalBlue';
+    // pointsToHighlight.style.color = 'royalBlue';
 
-    for (let index = 0; index < userTexts.length; index++) {
-      const userName = userTexts[index];
-      userName.textContent = normalizedSortedView[index].userName;
-      pointTexts[index].textContent = normalizedSortedView[index].points;
-      rankTexts[index].textContent = normalizedSortedView[index].rank;
-    } 
+    // for (let index = 0; index < userTexts.length; index++) {
+    //   const userName = userTexts[index];
+    //   userName.textContent = normalizedSortedView[index].userName;
+    //   pointTexts[index].textContent = normalizedSortedView[index].points;
+    //   rankTexts[index].textContent = normalizedSortedView[index].rank;
+    // } 
         
 
+}
+let leaderboardElements =  new Array();
+// [
+//   {
+//     userName: null,
+//     rank :null,
+//     points: null,
+//     image: null
+//   }
+// ]
+
+function createLeaderBoardUI()
+{
+  const leaderboardDiv = document.getElementById('div-leaderboard-quiz');
+  const leaderboardElement = document.getElementById('div-leaderelement-quiz');
+  for (let index = 0; index < sortedView.length; index++) {
+    const clonedElement = leaderboardElement.cloneNode(true);
+    const userName = clonedElement.querySelector('#l-user')
+    const rank = clonedElement.querySelector('#l-rank')
+    const points = clonedElement.querySelector('#l-points')
+    const image = clonedElement.querySelector('#img-pp')
+    userName.id ='l-user'+index;
+    rank.id ='l-rank'+index;
+    points.id ='l-points'+index;
+    image.id ='img-pp'+index;
+    const entry ={
+      userName: userName,
+      rank: rank,
+      points: points,
+      image :image,
+      div: clonedElement
+    }
+    clonedElement.id ='div-leaderelement'+index;
+    leaderboardElements.push(entry);
+    leaderboardDiv.insertBefore(clonedElement, leaderboardElement);
+  }
+  leaderboardElement.style.display ='none';
+  updateLeaderboardUI(sortedView);
+}
+const leaderUpButton = document.getElementById("btn-leaderup-quiz");
+const leaderDownButton = document.getElementById("btn-leaderdown-quiz");
+leaderUpButton.addEventListener('click',scrollToleaderboardTop);
+leaderDownButton.addEventListener('click',scrollToleaderboardUser);
+function updateLeaderboardUI(sortedView)
+{
+  for (let index = 0; index < sortedView.length; index++) {
+    const user = sortedView[index];
+    const leaderBoardElement = leaderboardElements[index];
+    leaderBoardElement.userName.textContent = user.userName;
+    leaderBoardElement.points.textContent = user.points;
+    leaderBoardElement.rank.textContent = index+1;    
+    leaderBoardElement.image.src = "./assets/pp"+getRandomInt(1,3)+".png";
+  }
+  const userIndex = sortedView.findIndex((user)=>user.userName == currentUser.userName);
+  leaderboardElements[userIndex].userName.style.color ='royalBlue';
+  leaderboardElements[userIndex].rank.style.color ='royalBlue';
+  leaderboardElements[userIndex].points.style.color ='royalBlue';
+  // leaderboardElements[userIndex].image.src =`./assets/pp${getRandomInt(1,3)}.png`;
+  leaderboardElements[userIndex].image.style.borderColor ='royalBlue';
+  leaderboardElements[userIndex].image.style.borderWidth ='2px';
+  leaderboardElements[userIndex].image.style.borderStyle ='round';
+  leaderboardElements[userIndex].image.style.borderRadius ='100px';
+  console.log(`./assets/pp${getRandomInt(1,3)}.png`);
+  setTimeout(scrollToleaderboardUser,500); 
+  //scrollToleaderboardUser();
+      // imageToHighlight.style.borderWidth = '2px';
+    // imageToHighlight.style.borderColor  = 'royalBlue';
+    // imageToHighlight.style.borderStyle  = 'round';
+    // imageToHighlight.style.borderRadius  = '100px';
+    // textToHightlight.style.color = 'royalBlue';
+    // rankToHighLight.style.color = 'royalBlue';
+    // pointsToHighlight.style.color = 'royalBlue';
+}
+function getRandomInt(min, max) 
+{
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function scrollToleaderboardTop()
+{
+  leaderboardElements[0].div.scrollIntoView({ behavior: "smooth"});
+}
+function scrollToleaderboardUser()
+{
+  const userIndex = sortedView.findIndex((user)=>user.userName == currentUser.userName);
+  leaderboardElements[userIndex].div.scrollIntoView({ behavior: "smooth"});
 }
 
 function createQuizPages() {

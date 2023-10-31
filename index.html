@@ -37,7 +37,7 @@
         <source src="sounds/timer.ogg" type="audio/ogg">
         <source src="sounds/timer.wav" type="audio/wav">
     </audio>
-    <div class="h-full w-full flex items-center z-30 absolute flex-col justify-center bg-yellow-50" id="div-splash-quiz">
+    <div class="h-full w-full flex items-center z-30 absolute flex-col justify-center bg-yellow-50 " id="div-splash-quiz">
         <label class="font-Monteserrat-black py-1 text-4xl sm:text-6xl md:text-8xl lg:text-8xl text-gray-600 "  >Dodo Quiz</label>
         <label class="font-Monteserrat-elight py-1 text-lg sm:text-xl md:text-3xl lg:text-5xl text-gray-600"  >Put your knowledge to test!</label>
         <div class="w-auto h-[50%]" id="div-lottiebig-quiz">
@@ -60,7 +60,7 @@
         <div class="flex flex-row h-1/6 w-full justify-center items-center">
 
             <img class=" w-auto h-1/4 pr-4" src="assets/logo.png" ></img>
-            <label class="font-Monteserrat  text-lg sm:text-2xl md:text-3xl lg:text-5xl text-gray-400  "  >Powered by DodoApps</label>
+            <label class="font-Monteserrat  text-lg sm:text-2xl md:text-3xl lg:text-5xl text-gray-400  "  >Powered by Dodo News</label>
         </div>
         
     </div>
@@ -169,7 +169,7 @@
             </div>
            
         <div  class=" w-screen  flex-shrink-0 h-20/21 bg-blue-100 bg-opacity-0 flex-col   justify-evenly  flex  px2-" id= "quiz-summary-page">
-                <div class="w-full h-20 flex-row flex justify-center">
+                <div class="w-full h-20 flex-row flex justify-center pt-5">
                     <img class="w- auto h-10 sm:h-14 md:h-16" src="assets/Trophe.png" alt="">
                     <label class="font-Monteserrat text-black text-3xl sm:text-5xl md:text-6xl lg:text-4xl ">Quiz Over!</label>
                 </div>
@@ -203,56 +203,65 @@
                         
                     </div>
                 </div>
-                <div class="h-2/5 flex justify-center items-center relative">
-                    <div class="absolute z-0 w-4/5 h-full bg-gray-100  rounded-3xl shadow-lg mb-4">
+                <div class="h-1/2 flex justify-around items-center relative flex-col">
+                    <div class="absolute z-0 w-4/5 h-full bg-gray-100  rounded-3xl shadow-lg ">
 
                     </div>
+                    <div class=" flex flex-col w-3/4 z-20 items-center justify-center h-10 pt-4">
+                        <div class="flex w-full flex-row justify-between items-center">
+                            <label class="font-Monteserrat text-md sm:text-xl md:text-2xl lg:text-3xl z-10"  >Rank</label>
+                            <label class="font-Monteserrat text-md sm:text-xl md:text-2xl lg:text-3xl z-10" >Name</label>
+                            <label class="font-Monteserrat text-md sm:text-xl md:text-2xl lg:text-3xl z-10" >Points</label>
+                        </div>
+                    </div>
+                    <div class="w-full h-8 flex flex-col justify-between items-center z-20 ">
+                        <label class="text-xs font-Monteserrat-elight "> Top</label>
+                        <div class="w-10 h-7 flex justify-center items-center" >
+                            <div class="w-10 h-7 rounded-md shadow-2xl bg-slate-300 opacity-30 flex  ">
+                             </div>
+                             <button class="absolute" id="btn-leaderup-quiz">
+                                <img class="w-auto h-full" src="assets/up.png" alt="">
+                            </button>
+                        </div> 
+                                   
+                    </div>
                     <!-- <img src="../assets/containertall.png" class="absolute z-0 w-auto h-full" alt=""> -->
-                    <div class="flex h-5/6 w-11/12 flex-col justify-between items-center ">
+                    <div class="flex h-3/5 w-11/12 flex-col justify-between items-center overflow-y-auto" id="div-leaderboard-quiz">
                            
-                            <label class="font-Monteserrat text-black text-xl sm:text-2xl md:text-3xl lg:text-4xl z-10">Global leaderboards</label>
-                            <div class="flex w-full  h-10 sm:h-16 md:h-20 lg:h-24 justify-center z-10 ">
+                            <!-- <label class="font-Monteserrat text-black text-xl sm:text-2xl md:text-3xl lg:text-4xl z-10">Global leaderboards</label> -->
+                            <div class="flex w-full  h-10 sm:h-16 md:h-20 lg:h-24 justify-around z-10 mt-4 " id="div-leaderelement-quiz">
                                 <div class="flex flex-row justify-around items-center w-5/6 ">
-                                    <label class="font-Monteserrat text-black text-md sm:text-xl md:text-2xl lg:text-3xl z-10" id="l-rank1-quiz">1.</label>
-                                    <img class="w-auto h-full" src="assets/pp1.png" alt="" id="img-pp1-quiz">
+                                    <label class="font-Monteserrat text-black text-md sm:text-xl md:text-2xl lg:text-3xl z-10" id="l-rank">1.</label>
+                                    <img class="w-auto h-full" src="assets/pp1.png" alt="" id="img-pp">
                                     <div class="flex w-1/2 justify-start items-center ">
-                                        <label class="font-Monteserrat text-black text-md sm:text-xl md:text-2xl lg:text-3xl z-10" id="l-user1-quiz">George </label>
+                                        <label class="font-Monteserrat text-black text-md sm:text-xl md:text-2xl lg:text-3xl z-10" id="l-user">George </label>
                                     </div>
                                     <div class="w-1/5 flex justify-center">
-                                        <label class="font-Monteserrat text-md sm:text-xl md:text-2xl lg:text-3xl z-10" id="l-points1-quiz">54</label>
+                                        <label class="font-Monteserrat text-md sm:text-xl md:text-2xl lg:text-3xl z-10" id="l-points">54</label>
                                     </div>
                                 </div>
                                 
                             </div>
-                            <div class="flex w-full   h-10 sm:h-16 md:h-20 lg:h-24 justify-center z-10 ">
-                                <div class="flex flex-row justify-evenly items-center w-5/6">
-                                    <label class="font-Monteserrat text-black text-md sm:text-xl md:text-2xl lg:text-3xl z-10"  id="l-rank2-quiz">1.</label>
-                                    <img class="w-auto h-full rounded-full" src="assets/pp2.png" alt="" id="img-pp2-quiz"> 
-                                    <div class="flex w-1/2 justify-start items-center ">
-                                        <label class="font-Monteserrat text-md  sm:text-xl md:text-2xl lg:text-3xl z-10" id="l-user2-quiz" >Athul Shaji (you)</label>
-                                    </div>
-                                    <div class="w-1/5 flex justify-center">
-                                        <label class="font-Monteserrat text-md sm:text-xl md:text-2xl lg:text-3xl z-10" id="l-points2-quiz" >54</label>
-                                    </div>
-                                   
-                                   
-                                </div>
-                                
-                            </div>
-                            <div class="flex w-full  h-10 sm:h-16 md:h-20 lg:h-24 justify-center z-10 ">
-                                <div class="flex flex-row justify-around items-center w-5/6  ">
-                                    <label class="font-Monteserrat text-black text-md sm:text-xl md:text-2xl lg:text-3xl z-10" id="l-rank3-quiz">1.</label>
-                                    <img class="w-auto h-full " src="assets/pp3.png" alt="" id="img-pp3-quiz">
-                                    <div class="flex w-1/2 justify-start items-center ">
-                                        <label class="font-Monteserrat text-black text-md  sm:text-xl md:text-2xl lg:text-3xl z-10" id="l-user3-quiz">Thejus S</label>
-                                    </div>
-                                    <div class="w-1/5 flex justify-center">
-                                        <label class="font-Monteserrat text-md sm:text-xl md:text-2xl lg:text-3xl z-10" id="l-points3-quiz">54</label>
-                                    </div>
-                                </div>
-                            </div>
+                            
                     
                 </div>
+                <div class="w-full h-10 flex flex-col justify-around items-center z-20 ">
+                    <div class="w-10 h-7 flex justify-center items-center" >
+                        <div class="w-10 h-7 rounded-md shadow-2xl bg-slate-300 opacity-30 flex ">
+                         </div>
+                         <button class="absolute" id="btn-leaderdown-quiz">
+                            <img class="w-auto h-full" src="assets/down.png" alt="">
+                        </button>
+                    </div> 
+                    <label class="text-xs font-Monteserrat-elight "> Current</label>
+                </div>
+                <!-- <div class="flex w-full h-7 z-20 justify-center relative">
+                    <label class="text-xs font-Monteserrat-elight"> Current</label>
+                    <button>
+                        <img class="w-auto h-3/4" src="assets/down.png" alt="">
+                    </button>
+                    
+                </div> -->
             </div>
         </div>
         
