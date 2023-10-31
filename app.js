@@ -260,7 +260,9 @@ function loadQuiz()
 }
 function showExistingUserSummary()
 {
-    overlayElement.style.display = "none";  
+    overlayElement.style.display = "none"; 
+    const quizPage = document.getElementById('quiz-page');
+    quizPage.style.display ='none'; 
     noOfQuiz=0;
     //sorterView.splice(1,4);
     console.log(sortedView);
@@ -672,7 +674,15 @@ function startNextQuiz() {
         sortedView.push({userName:dummy.userName, points: dummy.points});
       });
       sortedView.sort((a,b)=> b.points - a.points);
+      
     }
+    setTimeout(()=>{
+      for(var i=0;i<noOfQuiz;i++)
+      {
+         const page =  GetPage(i);
+         page.style.display = 'none';
+      }
+    },1000);
     const postScore =
     {
       coins: playerScore.coins,
