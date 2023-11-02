@@ -157,14 +157,51 @@ function getLocalUserData()
     userName: "guest"+deviceID.substring(0,5)
   };
 }
+const daysLabel = document.getElementById('l-days-quiz');
+const hoursLabel = document.getElementById('l-hours-quiz');
+const minutesLabel = document.getElementById('l-minutes-quiz');
+const quizEndDiv = document.getElementById('div-quizend-quiz');
+const millisecondsInSecond = 1000;
+const millisecondsInMinute = 60 * millisecondsInSecond;
+const millisecondsInHour = 60 * millisecondsInMinute;
+const millisecondsInDay = 24 * millisecondsInHour;
+let remainingTime = null;
+function showRemainingTime()
+{
+  const localDate = new Date();
+  const utcDate = new Date(localDate.toISOString());
+  const endDate = new Date(quizData.endDate);
+  const timeDifference = endDate - utcDate; 
+  
+  const days = Math.max( Math.floor(timeDifference / millisecondsInDay),0);
+  const hours = Math.max( Math.floor((timeDifference % millisecondsInDay) / millisecondsInHour),0);
+  const minutes = Math.max( Math.floor((timeDifference % millisecondsInHour) / millisecondsInMinute),0);
+  const seconds = Math.max( Math.floor((timeDifference % millisecondsInMinute) / millisecondsInSecond),0);
+  remainingTime = 
+  {
+    days: days,
+    hours: hours,
+    minutes: minutes,
+    seconds: seconds
+  }
+  daysLabel.textContent = remainingTime.days.toString();
+  hoursLabel.textContent = remainingTime.hours.toString();
+  minutesLabel.textContent = remainingTime.minutes.toString();
+  console.log(hasQuizExpired());
+}
+function hasQuizExpired()
+{
+  return (remainingTime.days<=0&& remainingTime.hours<=0&& remainingTime.minutes<=0);
+}
+const lottieBearContainer = document.getElementById('div-lottiebig-quiz');
+const lottierLoaderContainer = document.getElementById('div-lottieloader-quiz');
+const lottieEndContainer = document.getElementById('div-lottieend-quiz');
 loadSplashScreen();
 function loadSplashScreen()
  {
     splashStartTime = performance.now();
-    const lottieContainer = document.getElementById('div-lottiebig-quiz');
-    const lottierLoaderContainer = document.getElementById('div-lottieloader-quiz');
     const animationConfig1 = {
-    container: lottieContainer,
+    container: lottieBearContainer,
     renderer: 'svg', // You can choose 'svg', 'canvas', or 'html'
     loop: true, // Set to true if you want the animation to loop
     autoplay: true, // Set to true if you want the animation to play automatically
@@ -177,6 +214,7 @@ function loadSplashScreen()
       autoplay: true, // Set to true if you want the animation to play automatically
       path: './animations/loading.json', // Replace with the path to your Lottie animation JSON file
       };
+   
     const animation1 = lottie.loadAnimation(animationConfig1);
     const animation2 = lottie.loadAnimation(animationConfig2);
     /* Start the application after user data is cached locally or from flutter app */
@@ -213,9 +251,9 @@ async function getQuizInformation()
       noOfQuiz = quizData.getQuizCount();
       console.log(quizData.quizName + " count:"+ noOfQuiz);
       checkForUser();
+      showRemainingTime();
       currentUser.email = cachedUserData?.email;
       currentUser.userName = cachedUserData?.userName;
-     
 
     });
 }
@@ -396,7 +434,7 @@ function showExistingUserSummary()
   const StartInstruction =
   {
     Quiz:'Quiz',
-    Summary:'Summary'
+    Summary:'Summary',
   }
 
 
@@ -407,11 +445,33 @@ function showExistingUserSummary()
     startDiv.style.display = 'flex';
     startInstruction = instruction;
   }
+  function showQuizExpired()
+  {
+   
+    lottieBearContainer.style.display = 'none';
+    lottieEndContainer.style.display ='block';
+    const animationConfig = {
+      container: lottieEndContainer,
+      renderer: 'svg', // You can choose 'svg', 'canvas', or 'html'
+      loop: true, // Set to true if you want the animation to loop
+      autoplay: true, // Set to true if you want the animation to play automatically
+      path: './animations/ended.json', // Replace with the path to your Lottie animation JSON file
+      };
+    const anim =  lottie.loadAnimation(animationConfig);
+    anim.play();
+    loadingDiv.style.display ='none';
+    quizEndDiv.style.display ='flex';
+  }
   function checkForUserPresenceInQuiz()
   {
       
     const index = sortedUsers.findIndex((user)=> user.email == currentUser.email);  
     currentUser.rank = index;
+    if(hasQuizExpired())
+    {
+      showQuizExpired();
+      return;
+    }
     if(index<0)
       {
         console.log("No user found in the same quiz");

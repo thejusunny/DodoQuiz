@@ -14,6 +14,7 @@ export class QuizData {
         };
         this.quizItems.push(quiz);
       }
+      this.endDate = quizData.endDate;
     }
     getAll() {
       return this.quizItems;
