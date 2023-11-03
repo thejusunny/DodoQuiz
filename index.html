@@ -43,19 +43,19 @@
         <div class="flex justify-center items-center w-full h-24 flex-col pt-5">
             <label class="font-Monteserrat-elight  text-lg sm:text-2xl md:text-3xl lg:text-5xl text-black z-10 "  >Ends in</label>
             <div class="flex flex-row justify-around w-2/3 ">
-                <div class="flex justify-center items-center relative w-10 h-10">
+                <div class="flex justify-center items-center relative w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16">
                     <label class="font-Monteserrat  text-lg sm:text-2xl md:text-3xl lg:text-5xl text-black z-10 " id="l-days-quiz" >5</label>
                     <div class="absolute  w-full h-full bg-gray-300 rounded-xl opacity-50">
                     </div>
                     
                 </div>
-                <div class="flex justify-center items-center relative  w-10 h-10">
+                <div class="flex justify-center items-center relative  w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16">
                     <label class="font-Monteserrat  text-lg sm:text-2xl md:text-3xl lg:text-5xl text-black z-10 " id="l-hours-quiz" >12</label>
                     <div class="absolute  w-full h-full  bg-gray-300 rounded-xl opacity-50">
                     </div>
                     
                 </div>
-                <div class="flex justify-center items-center relative  w-10 h-10">
+                <div class="flex justify-center items-center relative  w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16">
                     <label class="font-Monteserrat  text-lg sm:text-2xl md:text-3xl lg:text-5xl text-black z-10 " id="l-minutes-quiz" >54</label>
                     <div class="absolute  w-full h-full  bg-gray-300 rounded-xl opacity-50">
                     </div>
@@ -203,10 +203,10 @@
                 </div>
             </div>
            
-        <div  class=" w-screen  flex-shrink-0 h-20/21 bg-blue-100 bg-opacity-0 flex-col   justify-evenly  flex  px2-" id= "quiz-summary-page">
+        <div  class=" w-screen  flex-shrink-0 h-97% bg-blue-100 bg-opacity-0 flex-col   justify-evenly  flex  px2-" id= "quiz-summary-page">
                 <div class="w-full h-20 flex-row flex justify-center pt-5">
                     <img class="w- auto h-10 sm:h-14 md:h-16" src="assets/Trophe.png" alt="">
-                    <label class="font-Monteserrat text-black text-3xl sm:text-5xl md:text-6xl lg:text-4xl ">Quiz Over!</label>
+                    <label class="font-Monteserrat text-black text-3xl sm:text-4xl md:text-5xl lg:text-5xl ">Quiz Over!</label>
                 </div>
                 <div class="flex h-1/3 flex-col justify-around items-center relative pb-4  ">
                     <div class="absolute z-0 w-11/12 h-full bg-gray-100  rounded-xl shadow-lg mb-4">
@@ -237,7 +237,20 @@
                         </div>
                         
                     </div>
+                    <div class="absolute z-40 w-11/12 h-full bg-opacity-20 bg-slate-200 rounded-xl backdrop-blur-md flex justify-center items-center mb-4 hidden" id="div-login-quiz">
+                        <div class="flex flex-col justify-evenly items-center w-11/12 h-11/12">
+                            <label class="font-Monteserrat  text-lg sm:text-2xl md:text-3xl lg:text-5xl text-black z-10 "  >Login to view rewards</label>
+                            <img src="assets/medal.png" class="w-12 h-auto" >
+                            <label class="font-Monteserrat  text-lg sm:text-2xl md:text-3xl lg:text-5xl text-black z-10 "  >Hurry up!</label>
+                            <div class="flex justify-center items-center relative w-1/2 h-12  ">
+                                <div class="absolute z-10 w-full h-full bg-blue-500 rounded-xl scaling-button">
+                                </div>
+                                <label class="font-Monteserrat  text-lg sm:text-2xl md:text-3xl lg:text-5xl text-black z-30 scaling-button" id="btn-login-quiz" >Login</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+               
                 <div class="h-1/2 flex justify-around items-center relative flex-col">
                     <div class="absolute z-0 w-11/12 h-full bg-gray-100  rounded-xl shadow-lg ">
 
@@ -297,7 +310,10 @@
                     </button>
                     
                 </div> -->
-            </div>
+                </div>
+                <div class="w-full justify-center flex items-center pt-1 hidden" id="div-loginprompt-quiz">
+                        <label class="font-Monteserrat text-md sm:text-lg md:text-xl lg:text-3xl text-gray-400">----Login to use your real name----</label>
+                </div>
         </div>
         
     </div>

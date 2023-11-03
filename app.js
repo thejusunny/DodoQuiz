@@ -852,10 +852,26 @@ function sendUserStatsToServer()
   }
  
 }
-
-
+function isAGuestUser()
+{
+  return currentUser.email == getLocalUserData().email;
+}
+function sendLoginEvent()
+{
+  console.log('User tried to login');
+}
 function updateSummaryUI()
 {
+    
+    if(isAGuestUser())
+    {
+      const loginDiv = document.getElementById('div-login-quiz');
+      const loginPromptDiv = document.getElementById('div-loginprompt-quiz')
+      const loginButton = document.getElementById('btn-login-quiz');
+      loginDiv.style.display ='flex';
+      loginPromptDiv.style.display ='flex';
+      loginButton.addEventListener('click',sendLoginEvent);
+    }
     const timeText = getElementsFromCurrentPage('timestats-txt');
 
     const coinText = getElementsFromCurrentPage('coinstats-txt');
