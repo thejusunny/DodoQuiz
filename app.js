@@ -142,11 +142,25 @@ audioButton.addEventListener('click',()=>{
 
 let leaderBoardUsers ;
 const playerScore = new PlayerScore(); 
- //*******Call this function from flutter webview widget********
-function cacheUserDataFromApp(data)
+ 
+function cacheUserDataLocally(data)
 {
   const parsedData = data;
   //const parsedData = JSON.parse(data);
+  cachedUserData = parsedData;
+  getQuizInformation();
+}
+/*
+userName: string
+email: string
+image: image/ string
+*/
+//*******Call this function from flutter webview widget********
+function cacheUserDataFromApp(data)
+{
+  console.log(data);
+  // const parsedData = data;
+  const parsedData = JSON.parse(data);
   cachedUserData = parsedData;
   getQuizInformation();
 }
@@ -219,7 +233,7 @@ function loadSplashScreen()
     const animation2 = lottie.loadAnimation(animationConfig2);
     /* Start the application after user data is cached locally or from flutter app */
     //cacheUserDataFromApp({email:'Albin@example.com', userName:'Albin J'});
-    cacheUserDataFromApp(getLocalUserData());
+    //cacheUserDataLocally(getLocalUserData());
  }
 async function getQuizInformation()
 {
@@ -254,6 +268,7 @@ async function getQuizInformation()
       showRemainingTime();
       currentUser.email = cachedUserData?.email;
       currentUser.userName = cachedUserData?.userName;
+      currentUser.image = cachedUserData?.image;
 
     });
 }
@@ -749,13 +764,17 @@ function startNextQuiz() {
       xp: playerScore.xp
     }
     createLeaderBoardUI();
-    //window.webviewDataChannel.postMessage(JSON.stringify({coins: playerScore.coins, xp: playerScore.xp}));
+    sendRewardsToApp(postScore);
     updateSummaryUI();
     sendUserStatsToServer();
     return;
   }
   scrollToNext();
   setupQuiz();
+}
+function sendRewardsToApp(score)
+{
+    window.setRewards?.postMessage(JSON.stringify({coins: playerScore.coins, xp: playerScore.xp}));
 }
 function timerRanOut() {
   startNextQuiz();
@@ -858,6 +877,7 @@ function isAGuestUser()
 }
 function sendLoginEvent()
 {
+  window.loginRequest?.postMessage("login"); 
   console.log('User tried to login');
 }
 function updateSummaryUI()
