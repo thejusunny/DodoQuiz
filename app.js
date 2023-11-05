@@ -156,7 +156,7 @@ email: string
 image: image/ string
 */
 //*******Call this function from flutter webview widget********
-function cacheUserDataFromApp(data)
+export function cacheUserDataFromApp(data)
 {
   console.log(data);
   // const parsedData = data;
