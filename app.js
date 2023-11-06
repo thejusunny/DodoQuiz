@@ -164,6 +164,7 @@ export function cacheUserDataFromApp(data)
   cachedUserData = parsedData;
   getQuizInformation();
 }
+window.helloWorld = helloWorld;
 export function helloWorld()
 {
   console.log("HelloWorld");
