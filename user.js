@@ -1,4 +1,4 @@
-export class QuizUser
+ class QuizUser
 {
     constructor()
     {

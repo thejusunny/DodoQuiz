@@ -1,8 +1,8 @@
-import { QuizData } from "./quizdata.js";
-import { QuizUser } from "./user.js";
-import { PlayerScore } from "./quizdata.js";
-import { LeaderBoardUsers } from "./quizdata.js";
-import { Animation } from "./animation.js";
+// import { QuizData } from "./quizdata.js";
+// import { QuizUser } from "./user.js";
+// import { PlayerScore } from "./quizdata.js";
+// import { LeaderBoardUsers } from "./quizdata.js";
+// import { Animation } from "./animation.js";
 let deviceID = localStorage.getItem('deviceID');
 if(!deviceID)
 { 
@@ -156,7 +156,7 @@ email: string
 image: image/ string
 */
 //*******Call this function from flutter webview widget********
-export function cacheUserDataFromApp(data)
+function cacheUserDataFromApp(data)
 {
   console.log(data);
   // const parsedData = data;

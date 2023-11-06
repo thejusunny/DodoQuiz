@@ -1,4 +1,4 @@
-export class QuizData {
+ class QuizData {
     constructor(quizData) {
       this.mainData = quizData.data;
       this.quizItems = new Array();
@@ -27,7 +27,7 @@ export class QuizData {
         return this.mainData.questions.length;
     }
   }
-  export class PlayerScore
+   class PlayerScore
   {
       constructor()
       {
@@ -87,7 +87,7 @@ export class QuizData {
         return isNaN(score)?0:score.toFixed(0);
     }
 }
-export class LeaderBoardUsers
+ class LeaderBoardUsers
 {
     constructor( quizData)
     {
