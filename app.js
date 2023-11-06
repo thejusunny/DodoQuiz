@@ -164,11 +164,11 @@ export function cacheUserDataFromApp(data)
   cachedUserData = parsedData;
   getQuizInformation();
 }
-window.helloWorld = helloWorld;
 function helloWorld()
 {
   console.log("HelloWorld");
 }
+window.helloWorld = helloWorld;
 function getLocalUserData()
 {
   return {
