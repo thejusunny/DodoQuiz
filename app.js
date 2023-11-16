@@ -158,7 +158,7 @@ image: image/ string
 //*******Call this function from flutter webview widget********
 function cacheUserDataFromApp(data)
 {
-  console.log(data);
+  console.log("Recieved data"+data);
   // const parsedData = data;
   let parsedData = JSON.parse(data);
   if(parsedData.userName==''|| parsedData.email=='' )
@@ -166,11 +166,6 @@ function cacheUserDataFromApp(data)
   cachedUserData = parsedData;
   getQuizInformation();
 }
-function helloWorld()
-{
-  console.log("HelloWorld");
-}
-window.helloWorld = helloWorld;
 function getLocalUserData()
 {
   return {
