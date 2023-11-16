@@ -161,7 +161,8 @@ function cacheUserDataFromApp(data)
   console.log("Recieved data"+data);
   // const parsedData = data;
   let parsedData = JSON.parse(data);
-  console.log("Parsed data"+parsedData);
+  console.log("Parsed data"+parsedData.userName);
+  console.log("Parsed data"+parsedData.email);
   if(parsedData.userName===null|| parsedData.email===null)
     parsedData = getLocalUserData();
   cachedUserData = parsedData;
