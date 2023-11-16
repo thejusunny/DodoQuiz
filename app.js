@@ -161,7 +161,8 @@ function cacheUserDataFromApp(data)
   console.log("Recieved data"+data);
   // const parsedData = data;
   let parsedData = JSON.parse(data);
-  if(parsedData.userName==null|| parsedData.email==null)
+  console.log("Parsed data"+parsedData);
+  if(parsedData.userName===null|| parsedData.email===null)
     parsedData = getLocalUserData();
   cachedUserData = parsedData;
   getQuizInformation();
