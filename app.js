@@ -91,7 +91,6 @@ const audioButton = document.getElementById('btn-audiotoggle-quiz');
 const audioImage = document.getElementById('img-audio-quiz');
 const startButton = document.getElementById('btn-start-quiz');
 startButton.addEventListener('click', startButtonClicked);
-
 const audioPlayers = new Array();
 audioPlayers.push(wrongAudioPlayer);
 audioPlayers.push(correctAudioPlayer);
@@ -239,9 +238,9 @@ function loadSplashScreen()
    
     const animation1 = lottie.loadAnimation(animationConfig1);
     const animation2 = lottie.loadAnimation(animationConfig2);
-    /* Start the application after user data is cached locally or from flutter app */
-    //cacheUserDataFromApp({email:'Albin@example.com', userName:'Albin J'});
-    //cacheUserDataLocally(getLocalUserData());
+    //const jsonString = '{"email":"neon@gmail.com", "userName":"NeonEm", "image":null}'
+    // const jsonString = '{"email":null, "userName":null, "image":null}'
+    // cacheUserDataFromApp(jsonString);
  }
 async function getQuizInformation()
 {
@@ -887,17 +886,36 @@ function sendLoginEvent()
 {
   window.loginRequest?.postMessage("login"); 
   console.log('User tried to login');
+  // setTimeout(()=>{
+  //    const jsonString = '{"email":"neon@gmail.com", "userName":"NeonEm", "image":null}'
+  //   loginSuccesful(jsonString);
+  // }, 2000);
 }
+const loginDiv = document.getElementById('div-login-quiz');
+async function loginSuccesful(data) 
+{
+  const oldUser = currentUser;
+  deleteUser(oldUser.email);
+  const parsedData = JSON.parse(data);
+  updateLeaderboardUser(parsedData);
+  currentUser.userName = parsedData?.userName;
+  currentUser.email = parsedData?.email;
+  currentUser.image = parsedData?.image;
+  loginDiv.style.display ='none';
+  await createUser(currentUser);
+  sendUserStatsToServer();
+}
+
 function updateSummaryUI()
 {
     
     if(isAGuestUser())
     {
-      const loginDiv = document.getElementById('div-login-quiz');
-      const loginPromptDiv = document.getElementById('div-loginprompt-quiz')
+     
+      //const loginPromptDiv = document.getElementById('div-loginprompt-quiz')
       const loginButton = document.getElementById('btn-login-quiz');
       loginDiv.style.display ='flex';
-      loginPromptDiv.style.display ='flex';
+      //loginPromptDiv.style.display ='flex';
       loginButton.addEventListener('click',sendLoginEvent);
     }
     const timeText = getElementsFromCurrentPage('timestats-txt');
@@ -914,52 +932,52 @@ function updateSummaryUI()
     correctText.textContent = playerScore.correct;
     wrongText.textContent = playerScore.wrong;
 
-    const normalizedSortedView = leaderBoardUsers.getNormalizedSortedView();
-    const userRank = leaderBoardUsers.getNormalizedUserRank(); //1-3
-    const userTexts = new Array();
-    const rankTexts = new Array();
-    const pointTexts = new Array();
-    const profileImages = new Array();
-    userTexts.push ( getElementsFromCurrentPage('user1-txt'));
-    userTexts.push ( getElementsFromCurrentPage('user2-txt'));
-    userTexts.push ( getElementsFromCurrentPage('user3-txt'));
+    // const normalizedSortedView = leaderBoardUsers.getNormalizedSortedView();
+    // const userRank = leaderBoardUsers.getNormalizedUserRank(); //1-3
+    // const userTexts = new Array();
+    // const rankTexts = new Array();
+    // const pointTexts = new Array();
+    // const profileImages = new Array();
+    // userTexts.push ( getElementsFromCurrentPage('user1-txt'));
+    // userTexts.push ( getElementsFromCurrentPage('user2-txt'));
+    // userTexts.push ( getElementsFromCurrentPage('user3-txt'));
     
-    pointTexts.push ( getElementsFromCurrentPage('points1-txt'));
-    pointTexts.push ( getElementsFromCurrentPage('points2-txt'));
-    pointTexts.push ( getElementsFromCurrentPage('points3-txt'));
+    // pointTexts.push ( getElementsFromCurrentPage('points1-txt'));
+    // pointTexts.push ( getElementsFromCurrentPage('points2-txt'));
+    // pointTexts.push ( getElementsFromCurrentPage('points3-txt'));
 
-    rankTexts.push ( getElementsFromCurrentPage('rank1-txt'));
-    rankTexts.push ( getElementsFromCurrentPage('rank2-txt'));
-    rankTexts.push ( getElementsFromCurrentPage('rank3-txt'));
+    // rankTexts.push ( getElementsFromCurrentPage('rank1-txt'));
+    // rankTexts.push ( getElementsFromCurrentPage('rank2-txt'));
+    // rankTexts.push ( getElementsFromCurrentPage('rank3-txt'));
 
-    profileImages.push ( getElementsFromCurrentPage('pp1-img'));
-    profileImages.push ( getElementsFromCurrentPage('pp2-img'));
-    profileImages.push ( getElementsFromCurrentPage('pp3-img'));
-    let imageToHighlight = null;
-    let textToHightlight = null;
-    let rankToHighLight = null;
-    let pointsToHighlight = null;
-    if(userRank<=1)
-    {
-      imageToHighlight = profileImages[0];
-      textToHightlight = userTexts[0];
-      rankToHighLight = rankTexts[0];
-      pointsToHighlight = pointTexts[0];
-    }
-    else if(userRank<=2)
-    {
-      imageToHighlight =  profileImages[1];
-      textToHightlight = userTexts[1];
-      rankToHighLight = rankTexts[1];
-      pointsToHighlight = pointTexts[1];
-    }
-    else
-    {
-      imageToHighlight =  profileImages[2];
-      textToHightlight = userTexts[2];
-      rankToHighLight = rankTexts[2];
-      pointsToHighlight = pointTexts[2];
-    }
+    // profileImages.push ( getElementsFromCurrentPage('pp1-img'));
+    // profileImages.push ( getElementsFromCurrentPage('pp2-img'));
+    // profileImages.push ( getElementsFromCurrentPage('pp3-img'));
+    // let imageToHighlight = null;
+    // let textToHightlight = null;
+    // let rankToHighLight = null;
+    // let pointsToHighlight = null;
+    // if(userRank<=1)
+    // {
+    //   imageToHighlight = profileImages[0];
+    //   textToHightlight = userTexts[0];
+    //   rankToHighLight = rankTexts[0];
+    //   pointsToHighlight = pointTexts[0];
+    // }
+    // else if(userRank<=2)
+    // {
+    //   imageToHighlight =  profileImages[1];
+    //   textToHightlight = userTexts[1];
+    //   rankToHighLight = rankTexts[1];
+    //   pointsToHighlight = pointTexts[1];
+    // }
+    // else
+    // {
+    //   imageToHighlight =  profileImages[2];
+    //   textToHightlight = userTexts[2];
+    //   rankToHighLight = rankTexts[2];
+    //   pointsToHighlight = pointTexts[2];
+    // }
     // imageToHighlight.style.borderWidth = '2px';
     // imageToHighlight.style.borderColor  = 'royalBlue';
     // imageToHighlight.style.borderStyle  = 'round';
@@ -1029,15 +1047,7 @@ function updateLeaderboardUI(sortedView)
     leaderBoardElement.rank.textContent = index+1;    
     leaderBoardElement.image.src = "./assets/pp"+getRandomInt(1,3)+".png";
   }
-  const userIndex = sortedView.findIndex((user)=>user.userName == currentUser.userName);
-  leaderboardElements[userIndex].userName.style.color ='royalBlue';
-  leaderboardElements[userIndex].rank.style.color ='royalBlue';
-  leaderboardElements[userIndex].points.style.color ='royalBlue';
-  // leaderboardElements[userIndex].image.src =`./assets/pp${getRandomInt(1,3)}.png`;
-  leaderboardElements[userIndex].image.style.borderColor ='royalBlue';
-  leaderboardElements[userIndex].image.style.borderWidth ='2px';
-  leaderboardElements[userIndex].image.style.borderStyle ='round';
-  leaderboardElements[userIndex].image.style.borderRadius ='100px';
+  highlightUser();
   console.log(`./assets/pp${getRandomInt(1,3)}.png`);
   setTimeout(scrollToleaderboardUser,500); 
   //scrollToleaderboardUser();
@@ -1048,6 +1058,24 @@ function updateLeaderboardUI(sortedView)
     // textToHightlight.style.color = 'royalBlue';
     // rankToHighLight.style.color = 'royalBlue';
     // pointsToHighlight.style.color = 'royalBlue';
+}
+function updateLeaderboardUser(newUser)
+{
+  const userIndex = sortedView.findIndex((user)=>user.userName == currentUser.userName);
+  leaderboardElements[userIndex].userName.textContent =newUser.userName;
+  leaderboardElements[userIndex].image.src = "./assets/pp"+getRandomInt(1,3)+".png";
+}
+function highlightUser()
+{
+  const userIndex = sortedView.findIndex((user)=>user.userName == currentUser.userName);
+  leaderboardElements[userIndex].userName.style.color ='royalBlue';
+  leaderboardElements[userIndex].rank.style.color ='royalBlue';
+  leaderboardElements[userIndex].points.style.color ='royalBlue';
+  // leaderboardElements[userIndex].image.src =`./assets/pp${getRandomInt(1,3)}.png`;
+  leaderboardElements[userIndex].image.style.borderColor ='royalBlue';
+  leaderboardElements[userIndex].image.style.borderWidth ='2px';
+  leaderboardElements[userIndex].image.style.borderStyle ='round';
+  leaderboardElements[userIndex].image.style.borderRadius ='100px';
 }
 function getRandomInt(min, max) 
 {
