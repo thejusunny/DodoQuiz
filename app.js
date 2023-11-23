@@ -238,9 +238,10 @@ function loadSplashScreen()
    
     const animation1 = lottie.loadAnimation(animationConfig1);
     const animation2 = lottie.loadAnimation(animationConfig2);
+    // const jsonString = '{"email":"neon@gmail.com", "userName":"NeonEm", "image":"https://media.licdn.com/dms/image/C5103AQHIMLDbMKGTDg/profile-displayphoto-shrink_800_800/0/1561316890426?e=1706140800&v=beta&t=_H0vcdSzs8NSf_JMXdtE6X5Tj9Zc3Eyw6lrgqhLgAqM"}'
     //const jsonString = '{"email":"neon@gmail.com", "userName":"NeonEm", "image":null}'
     // const jsonString = '{"email":null, "userName":null, "image":null}'
-    // cacheUserDataFromApp(jsonString);
+     //cacheUserDataFromApp(jsonString);
  }
 async function getQuizInformation()
 {
@@ -413,6 +414,7 @@ function showExistingUserSummary()
             const oldEmail = localUser.email;
             localUser.email = cachedUserData.email;
             localUser.userName = cachedUserData.userName;
+            localUser.image = cachedUserData.image;
             deleteUser(oldEmail);
             await createUser(localUser);
             fetchAndsortAllQuizUsers();
@@ -531,6 +533,7 @@ function showExistingUserSummary()
             "userName": data.userName,
             "quizStats": data.quizStats || null,
             "pollStats": data.pollStats || null,
+            "image": data.image,
           })
     
         });
@@ -574,6 +577,7 @@ function showExistingUserSummary()
             userName:sortedUser.userName,
             email: sortedUser.email,
             points: sortedUser.quizStats[0].stats.points,
+            image: sortedUser.image
           }
           sortedView.push(user);
           console.log(user);
@@ -744,7 +748,7 @@ function startNextQuiz() {
   if (currentPage >= noOfQuiz - 1) {
     scrollToNext();
     playerScore.finalizeScore(quizData.getQuizCount());
-    const newUser= {userName:currentUser.userName, points:playerScore.points};
+    const newUser= {userName:currentUser.userName, points:playerScore.points, image: currentUser.image, email: currentUser.email};
     sortedView.push(newUser);
     sortedView.sort((a,b)=> b.points - a.points);
     const index = sortedView.findIndex((user)=> user== newUser);
@@ -1045,7 +1049,7 @@ function updateLeaderboardUI(sortedView)
     leaderBoardElement.userName.textContent = user.userName;
     leaderBoardElement.points.textContent = user.points;
     leaderBoardElement.rank.textContent = index+1;    
-    leaderBoardElement.image.src = "./assets/pp"+getRandomInt(1,3)+".png";
+    leaderBoardElement.image.src = user.image?? "./assets/pp"+getRandomInt(1,3)+".png";
   }
   highlightUser();
   console.log(`./assets/pp${getRandomInt(1,3)}.png`);
@@ -1063,7 +1067,7 @@ function updateLeaderboardUser(newUser)
 {
   const userIndex = sortedView.findIndex((user)=>user.userName == currentUser.userName);
   leaderboardElements[userIndex].userName.textContent =newUser.userName;
-  leaderboardElements[userIndex].image.src = "./assets/pp"+getRandomInt(1,3)+".png";
+  leaderboardElements[userIndex].image.src = newUser.image?? "./assets/pp"+getRandomInt(1,3)+".png";
 }
 function highlightUser()
 {
