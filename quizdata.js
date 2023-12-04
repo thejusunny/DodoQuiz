@@ -39,6 +39,7 @@
           this.points = 0;
           this.time = 0;
           this. correctConstant = 200;
+          this.stats = new Array();
 
       }
       addCoin(amount)
@@ -48,6 +49,15 @@
       addXp(amount)
       {
           this.xp += Number(amount);
+      }
+      setStats(correct, time)
+      {
+        this.stats.push(
+          {
+            correct: correct,
+            time: time
+          }
+        );
       }
       addCorrect()
       {
@@ -65,26 +75,65 @@
       finalizeScore(noOfQuiz)
       {
         this.time = Number( this.averageTime());
-        this.points = Number( this.GetScore(noOfQuiz))
-
+        this.points = Number( this.GetScore())
       }
       averageTime()
       {
-          if (this.timeArray.length === 0) {
-              return 0; // To avoid division by zero
-            }
-            const sum = this.timeArray.reduce((total, num) => total + num, 0);
-            return (sum / this.timeArray.length).toFixed(2);
+          // if (this.timeArray.length === 0) 
+          // {
+          //     return 0; // To avoid division by zero
+          // }
+          // const sum = this.timeArray.reduce((total, num) => total + num, 0);
+          // return (sum / this.timeArray.length).toFixed(2);
+          if(this.stats.length ===0)
+          return 0;
+        let totalTime;
+        this.stats.forEach(stat => {
+          totalTime += stat.time;
+        });
+        return (totalTime/this.stats.length).toFixed(2);
       }
-      GetScore(noOfQuiz)
+      GetScore()
       {
        
-        const miniumScore = 100;
-        const scorePerQuestion = 100;
-        const averageResponseTime = 1;
-        const score = miniumScore + (scorePerQuestion* this.correct) + (50 * Math.max (0,averageResponseTime/this.averageTime()));
+        const maxScoreForReaction = 30;
+        const scorePerCorrectAnswer = 70;
+        const scorePerWrongAnswer = 0;
+        const fastestResponseTime = 2;
+        const miniumResponseTime = quizDuration - fastestResponseTime;
+
+       
+
+        let points = 0;
+        let totalScore =0;
+        
+        this.stats.forEach(stat=>{
+          var index = this.stats.findIndex(item => item === stat)+1; 
+          var clampedTime = Math.max(stat.time - fastestResponseTime,0);
+          var mult  = Math.min( 1 - (clampedTime/miniumResponseTime),1);
+          if(stat.correct)
+          {
+            mult = mult<0? 0: mult;
+            points = scorePerCorrectAnswer + Number(maxScoreForReaction * mult);
+          }
+          // if answer is wrong but response time is between 1-quizDuration/2 then maxScoreforReaction* ratio *0.5
+          else
+          {
+              mult  = 1 - (clampedTime/(miniumResponseTime*0.5));
+              mult = mult<0? 0: mult;
+              points = scorePerWrongAnswer + Number(maxScoreForReaction * (mult*0.5));
+          }
+          console.log("Question"+ index+":"+ points);
+          totalScore += points;
+        });
+        
+        
+        //const miniumScore = 100;
+        
+        // const averageResponseTime = 1;
+        // const score = miniumScore + (scorePerCorrectAnswer* this.correct) + (50 * Math.max (0,averageResponseTime/this.averageTime()));
         // const score = 100+ (25* this.correct*noOfQuiz);
-        return isNaN(score)?0:score.toFixed(0);
+        return isNaN(totalScore)?0:totalScore.toFixed(0);
     }
 }
  class LeaderBoardUsers

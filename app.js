@@ -788,6 +788,9 @@ function sendRewardsToApp(score)
     window.setRewards?.postMessage(JSON.stringify({coins: playerScore.coins, xp: playerScore.xp}));
 }
 function timerRanOut() {
+  playerScore.addWrong();
+  playerScore.addTime(quizDuration);
+  playerScore.setStats(false, quizDuration);
   startNextQuiz();
   timerAudioPlayer.pause();
 }
@@ -808,16 +811,18 @@ function OptionSelected(index, button) {
       startNextQuiz();
     }, 1000);
     disableOptions();
-    playerScore.addCorrect();
+    // playerScore.addCorrect();
     playerScore.addCoin(quizElement.rewards[0]);
     playerScore.addXp(quizElement.rewards[1]);
-    playerScore.addTime( meterFillAnimation.progress* quizDuration);
+    // playerScore.addTime( meterFillAnimation.progress* quizDuration);
+    playerScore.setStats(true, meterFillAnimation.progress* quizDuration);
     correctAudioPlayer.play();
   } 
   else 
   {
-    playerScore.addWrong();
-    playerScore.addTime( quizDuration);
+    // playerScore.addWrong();
+    // playerScore.addTime( quizDuration);
+    playerScore.setStats(false, meterFillAnimation.progress* quizDuration);
     bgDiv.style.backgroundColor = "red";
     const correctButton = getElementsFromCurrentPage(
       "option" + quizElement.answer + "-btn"
