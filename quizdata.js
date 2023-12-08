@@ -59,6 +59,16 @@
           }
         );
       }
+      getCorrect()
+      {
+          var correct = this.stats.filter(element=> element.correct == true);
+          return correct.length;
+      }
+      getWrong()
+      {
+        var wrong = this.stats.filter(element=> element.correct == false);
+        return wrong.length;
+      }
       addCorrect()
       {
           this.correct += 1;
@@ -76,6 +86,8 @@
       {
         this.time = Number( this.averageTime());
         this.points = Number( this.GetScore())
+        this.correct = this.getCorrect();
+        this.wrong = this.getWrong();
       }
       averageTime()
       {

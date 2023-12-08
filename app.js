@@ -788,7 +788,7 @@ function sendRewardsToApp(score)
     window.setRewards?.postMessage(JSON.stringify({coins: playerScore.coins, xp: playerScore.xp}));
 }
 function timerRanOut() {
-  playerScore.addWrong();
+  //playerScore.addWrong();
   playerScore.addTime(quizDuration);
   playerScore.setStats(false, quizDuration);
   startNextQuiz();
@@ -940,79 +940,9 @@ function updateSummaryUI()
     xpText.textContent = playerScore.xp;
     correctText.textContent = playerScore.correct;
     wrongText.textContent = playerScore.wrong;
-
-    // const normalizedSortedView = leaderBoardUsers.getNormalizedSortedView();
-    // const userRank = leaderBoardUsers.getNormalizedUserRank(); //1-3
-    // const userTexts = new Array();
-    // const rankTexts = new Array();
-    // const pointTexts = new Array();
-    // const profileImages = new Array();
-    // userTexts.push ( getElementsFromCurrentPage('user1-txt'));
-    // userTexts.push ( getElementsFromCurrentPage('user2-txt'));
-    // userTexts.push ( getElementsFromCurrentPage('user3-txt'));
-    
-    // pointTexts.push ( getElementsFromCurrentPage('points1-txt'));
-    // pointTexts.push ( getElementsFromCurrentPage('points2-txt'));
-    // pointTexts.push ( getElementsFromCurrentPage('points3-txt'));
-
-    // rankTexts.push ( getElementsFromCurrentPage('rank1-txt'));
-    // rankTexts.push ( getElementsFromCurrentPage('rank2-txt'));
-    // rankTexts.push ( getElementsFromCurrentPage('rank3-txt'));
-
-    // profileImages.push ( getElementsFromCurrentPage('pp1-img'));
-    // profileImages.push ( getElementsFromCurrentPage('pp2-img'));
-    // profileImages.push ( getElementsFromCurrentPage('pp3-img'));
-    // let imageToHighlight = null;
-    // let textToHightlight = null;
-    // let rankToHighLight = null;
-    // let pointsToHighlight = null;
-    // if(userRank<=1)
-    // {
-    //   imageToHighlight = profileImages[0];
-    //   textToHightlight = userTexts[0];
-    //   rankToHighLight = rankTexts[0];
-    //   pointsToHighlight = pointTexts[0];
-    // }
-    // else if(userRank<=2)
-    // {
-    //   imageToHighlight =  profileImages[1];
-    //   textToHightlight = userTexts[1];
-    //   rankToHighLight = rankTexts[1];
-    //   pointsToHighlight = pointTexts[1];
-    // }
-    // else
-    // {
-    //   imageToHighlight =  profileImages[2];
-    //   textToHightlight = userTexts[2];
-    //   rankToHighLight = rankTexts[2];
-    //   pointsToHighlight = pointTexts[2];
-    // }
-    // imageToHighlight.style.borderWidth = '2px';
-    // imageToHighlight.style.borderColor  = 'royalBlue';
-    // imageToHighlight.style.borderStyle  = 'round';
-    // imageToHighlight.style.borderRadius  = '100px';
-    // textToHightlight.style.color = 'royalBlue';
-    // rankToHighLight.style.color = 'royalBlue';
-    // pointsToHighlight.style.color = 'royalBlue';
-
-    // for (let index = 0; index < userTexts.length; index++) {
-    //   const userName = userTexts[index];
-    //   userName.textContent = normalizedSortedView[index].userName;
-    //   pointTexts[index].textContent = normalizedSortedView[index].points;
-    //   rankTexts[index].textContent = normalizedSortedView[index].rank;
-    // } 
-        
-
 }
 let leaderboardElements =  new Array();
-// [
-//   {
-//     userName: null,
-//     rank :null,
-//     points: null,
-//     image: null
-//   }
-// ]
+
 
 function createLeaderBoardUI()
 {
@@ -1059,14 +989,6 @@ function updateLeaderboardUI(sortedView)
   highlightUser();
   console.log(`./assets/pp${getRandomInt(1,3)}.png`);
   setTimeout(scrollToleaderboardUser,500); 
-  //scrollToleaderboardUser();
-      // imageToHighlight.style.borderWidth = '2px';
-    // imageToHighlight.style.borderColor  = 'royalBlue';
-    // imageToHighlight.style.borderStyle  = 'round';
-    // imageToHighlight.style.borderRadius  = '100px';
-    // textToHightlight.style.color = 'royalBlue';
-    // rankToHighLight.style.color = 'royalBlue';
-    // pointsToHighlight.style.color = 'royalBlue';
 }
 function updateLeaderboardUser(newUser)
 {
