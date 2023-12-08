@@ -82,9 +82,9 @@
         console.log(t);  
         this.timeArray.push(Number(t));
       }
-      finalizeScore(noOfQuiz)
+      finalizeScore()
       {
-        this.time = Number( this.averageTime());
+        this.time = this.averageTime();
         this.points = Number( this.GetScore())
         this.correct = this.getCorrect();
         this.wrong = this.getWrong();
@@ -99,7 +99,7 @@
           // return (sum / this.timeArray.length).toFixed(2);
           if(this.stats.length ===0)
           return 0;
-        let totalTime;
+        let totalTime=0;
         this.stats.forEach(stat => {
           totalTime += stat.time;
         });

@@ -747,7 +747,7 @@ function setupQuiz() {
 function startNextQuiz() {
   if (currentPage >= noOfQuiz - 1) {
     scrollToNext();
-    playerScore.finalizeScore(quizData.getQuizCount());
+    playerScore.finalizeScore();
     const newUser= {userName:currentUser.userName, points:playerScore.points, image: currentUser.image, email: currentUser.email};
     sortedView.push(newUser);
     sortedView.sort((a,b)=> b.points - a.points);
