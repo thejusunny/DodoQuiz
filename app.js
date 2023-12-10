@@ -162,6 +162,11 @@ function cacheUserDataFromApp(data)
   let parsedData = JSON.parse(data);
   console.log("Parsed data"+parsedData.userName);
   console.log("Parsed data"+parsedData.email);
+  //In case you recieve a local file //TODO: need to remove this 
+  if(!isURL(parsedData.image))
+  {
+    parsedData.image = null;
+  }
   if(parsedData.userName===null|| parsedData.email===null) 
   {
     parsedData = getLocalUserData();
@@ -170,6 +175,10 @@ function cacheUserDataFromApp(data)
   cachedUserData = parsedData;
   console.log("Cached data"+cachedUserData);
   getQuizInformation();
+}
+function isURL(str) {
+  const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+  return urlRegex.test(str);
 }
 function getLocalUserData()
 {
@@ -239,9 +248,10 @@ function loadSplashScreen()
     const animation1 = lottie.loadAnimation(animationConfig1);
     const animation2 = lottie.loadAnimation(animationConfig2);
     // const jsonString = '{"email":"neon@gmail.com", "userName":"NeonEm", "image":"https://media.licdn.com/dms/image/C5103AQHIMLDbMKGTDg/profile-displayphoto-shrink_800_800/0/1561316890426?e=1706140800&v=beta&t=_H0vcdSzs8NSf_JMXdtE6X5Tj9Zc3Eyw6lrgqhLgAqM"}'
+     const jsonString = '{"email":"thejusunny@gmail.com", "userName":"Thejus Sunny", "image":null}'
     //const jsonString = '{"email":"neon@gmail.com", "userName":"NeonEm", "image":null}'
     // const jsonString = '{"email":null, "userName":null, "image":null}'
-     //cacheUserDataFromApp(jsonString);
+     cacheUserDataFromApp(jsonString);
  }
 async function getQuizInformation()
 {
@@ -411,6 +421,7 @@ function showExistingUserSummary()
           //if local user exist then update local user.email and userName to the new username and push that to server and delete local user
           if(localUser)
           {
+            console.log("Guest User Replaced");
             const oldEmail = localUser.email;
             localUser.email = cachedUserData.email;
             localUser.userName = cachedUserData.userName;
@@ -421,6 +432,8 @@ function showExistingUserSummary()
           }
           else
           {
+            console.log("FirstTime User");
+            console.log(cachedUserData);
             await createUser(cachedUserData); // First time logged in user
             fetchAndsortAllQuizUsers();
           }
@@ -430,7 +443,7 @@ function showExistingUserSummary()
       }
       else //User exists, don't do anything for now
       {
-        console.log("Found");
+        console.log("Found Existing User");
         fetchAndsortAllQuizUsers();
       }
     });
