@@ -863,7 +863,7 @@ function sendUserStatsToServer()
         wrong: playerScore.wrong,
         coins: playerScore.coins,
         xp: playerScore.xp,
-        time: Number( playerScore.averageTime()),
+        time: Number( playerScore.time),
       }
        
     }
