@@ -248,10 +248,10 @@ function loadSplashScreen()
     const animation1 = lottie.loadAnimation(animationConfig1);
     const animation2 = lottie.loadAnimation(animationConfig2);
     // const jsonString = '{"email":"neon@gmail.com", "userName":"NeonEm", "image":"https://media.licdn.com/dms/image/C5103AQHIMLDbMKGTDg/profile-displayphoto-shrink_800_800/0/1561316890426?e=1706140800&v=beta&t=_H0vcdSzs8NSf_JMXdtE6X5Tj9Zc3Eyw6lrgqhLgAqM"}'
-     const jsonString = '{"email":"thejusunny@gmail.com", "userName":"Thejus Sunny", "image":null}'
+    //const jsonString = '{"email":"thejusunny@gmail.com", "userName":"Thejus Sunny", "image":null}'
     //const jsonString = '{"email":"neon@gmail.com", "userName":"NeonEm", "image":null}'
     // const jsonString = '{"email":null, "userName":null, "image":null}'
-     cacheUserDataFromApp(jsonString);
+     //cacheUserDataFromApp(jsonString);
  }
 async function getQuizInformation()
 {
